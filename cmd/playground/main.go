@@ -55,9 +55,9 @@ Access the web UI at http://localhost:8080/playground (or your configured host:p
 		Run: func(cmd *cobra.Command, args []string) {
 			server := playground.NewServerWithRefresh(port, host, refreshCache)
 
-			// Handle interrupt signals (Ctrl+C, Ctrl+Z, SIGTERM)
+			// Handle interrupt signals
 			sigChan := make(chan os.Signal, 1)
-			signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGTSTP)
+			setupSignalHandling(sigChan)
 
 			// Start server in goroutine
 			errChan := make(chan error, 1)
@@ -70,12 +70,7 @@ Access the web UI at http://localhost:8080/playground (or your configured host:p
 			// Wait for interrupt or error
 			select {
 			case sig := <-sigChan:
-				// Handle SIGTSTP (Ctrl+Z) - convert to graceful shutdown
-				if sig == syscall.SIGTSTP {
-					color.Yellow("\n🛑 Received suspend signal (Ctrl+Z), shutting down gracefully...")
-				} else {
-					color.Yellow("\n🛑 Received interrupt signal, shutting down...")
-				}
+				handleShutdownSignal(sig)
 				shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 				defer shutdownCancel()
 
@@ -136,5 +131,24 @@ func createRefreshCmd() *cobra.Command {
 			color.Green("✅ OpenAPI spec cache refreshed")
 		},
 	}
+}
+
+// Platform-specific signal handling
+func setupSignalHandling(sigChan chan<- os.Signal) {
+	// Windows doesn't have SIGTSTP, so we use a conditional build
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	// On Unix systems, SIGTSTP is also handled (see signal_unix.go)
+	notifyUNIXSignals(sigChan)
+}
+
+func handleShutdownSignal(sig os.Signal) {
+	msg := getShutdownMessage(sig)
+	color.Yellow("\n🛑 %s", msg)
+}
+
+// Stub functions - overridden on Unix systems
+var notifyUNIXSignals = func(sigChan chan<- os.Signal) {}
+var getShutdownMessage = func(sig os.Signal) string {
+	return "Received interrupt signal, shutting down..."
 }
 
