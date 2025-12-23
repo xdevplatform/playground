@@ -1,6 +1,6 @@
 :root {
-    --primary: #1d9bf0;
-    --primary-hover: #1a8cd8;
+    --primary: #7C8FA1;
+    --primary-hover: #6B7A8F;
     --secondary: #71767a;
     --success: #00ba7c;
     --danger: #f4212e;
@@ -289,12 +289,12 @@ body {
 }
 
 .stat-icon.users {
-    background: rgba(29, 155, 240, 0.2);
+    background: rgba(124, 143, 161, 0.2);
     color: var(--primary);
 }
 
 .stat-icon.tweets {
-    background: rgba(29, 155, 240, 0.15);
+    background: rgba(124, 143, 161, 0.15);
     color: var(--primary);
 }
 
@@ -550,7 +550,7 @@ body {
     color: var(--primary);
     text-transform: uppercase;
     padding: 4px 8px;
-    background: rgba(29, 155, 240, 0.1);
+    background: rgba(124, 143, 161, 0.1);
     border-radius: 4px;
 }
 
@@ -847,7 +847,7 @@ body {
 }
 
 .tweet-action:hover {
-    background: rgba(29, 155, 240, 0.1);
+    background: rgba(124, 143, 161, 0.1);
     color: var(--primary);
 }
 
@@ -1064,7 +1064,7 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: rgba(29, 155, 240, 0.2);
+    background: rgba(124, 143, 161, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1493,7 +1493,7 @@ body {
 .code-textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.1);
 }
 
 .code-textarea {
@@ -1572,7 +1572,7 @@ body {
 }
 
 .history-item-method.GET {
-    background: rgba(29, 155, 240, 0.2);
+    background: rgba(124, 143, 161, 0.2);
     color: #1d9bf0;
 }
 
@@ -1996,7 +1996,7 @@ body {
 }
 
 .toggle-switch input:focus + .toggle-slider {
-    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 29, 155, 240), 0.2);
+    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.2);
 }
 
 .toggle-switch:active .toggle-slider:before {
@@ -2463,7 +2463,7 @@ body {
 .search-input-large:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.1);
 }
 
 .quick-stats-bar {
