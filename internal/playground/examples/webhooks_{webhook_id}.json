@@ -1,0 +1,50 @@
+[
+  {
+    "endpoint": "/2/webhooks/{webhook_id}",
+    "method": "PUT",
+    "response": {
+      "data": {
+        "attempted": true
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 400,
+          "title": "Test Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {}
+  },
+  {
+    "endpoint": "/2/webhooks/{webhook_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "deleted": false
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "list"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "media"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 404,
+          "title": "Playground Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "endpoint": "/2/users/{id}/retweets",
+    "method": "POST",
+    "response": {
+      "data": {
+        "id": "1346889436626259968",
+        "retweeted": false
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 200,
+          "title": "Sample Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

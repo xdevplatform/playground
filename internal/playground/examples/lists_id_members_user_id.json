@@ -1,0 +1,36 @@
+[
+  {
+    "endpoint": "/2/lists/{id}/members/{user_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "is_member": true
+      },
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 401,
+          "title": "Sample Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "list.fields": [
+        "id",
+        "name",
+        "description",
+        "created_at",
+        "follower_count",
+        "member_count"
+      ],
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at"
+      ]
+    }
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "endpoint": "/2/media/upload/{id}/finalize",
+    "method": "POST",
+    "response": {
+      "data": {
+        "expires_after_secs": 626,
+        "id": "1146654567674912769",
+        "media_key": "mock_string_value",
+        "processing_info": {
+          "check_after_secs": 900,
+          "progress_percent": 85.41528240878313,
+          "state": "succeeded",
+          "type": 93
+        },
+        "size": 44
+      },
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Test Title",
+          "type": "list"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 503,
+          "title": "Example Title",
+          "type": "media"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 400,
+          "title": "Playground Title",
+          "type": "tweet"
+        }
+      ],
+      "meta": "default_value"
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

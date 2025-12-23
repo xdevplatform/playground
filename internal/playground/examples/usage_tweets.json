@@ -1,0 +1,82 @@
+[
+  {
+    "endpoint": "/2/usage/tweets",
+    "method": "GET",
+    "response": {
+      "data": {
+        "cap_reset_day": 306,
+        "daily_client_app_usage": [
+          {
+            "client_app_id": "1764192610708",
+            "usage": [
+              {
+                "date": "2025-11-26T13:30:10-08:00",
+                "usage": 929
+              },
+              {
+                "date": "2025-11-26T13:30:10-08:00",
+                "usage": 515
+              }
+            ],
+            "usage_result_count": 793
+          },
+          {
+            "client_app_id": "1764192610708",
+            "usage": [
+              {
+                "date": "2025-11-26T13:30:10-08:00",
+                "usage": 885
+              },
+              {
+                "date": "2025-11-26T13:30:10-08:00",
+                "usage": 675
+              },
+              {
+                "date": "2025-11-26T13:30:10-08:00",
+                "usage": 167
+              }
+            ],
+            "usage_result_count": 22
+          }
+        ],
+        "daily_project_usage": {
+          "project_id": 78,
+          "usage": [
+            {
+              "date": "2025-11-26T13:30:10-08:00",
+              "usage": 449
+            },
+            {
+              "date": "2025-11-26T13:30:10-08:00",
+              "usage": 769
+            },
+            {
+              "date": "2025-11-26T13:30:10-08:00",
+              "usage": 655
+            }
+          ]
+        },
+        "project_cap": 918,
+        "project_id": "1764192610708",
+        "project_usage": 458
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 500,
+          "title": "Playground Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

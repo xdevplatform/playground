@@ -1,0 +1,74 @@
+[
+  {
+    "endpoint": "/2/media/subtitles",
+    "method": "POST",
+    "response": {
+      "data": {
+        "associated_subtitles": [
+          {
+            "display_name": "English",
+            "id": "1146654567674912769",
+            "language_code": "EN"
+          },
+          {
+            "display_name": "English",
+            "id": "1146654567674912769",
+            "language_code": "EN"
+          },
+          {
+            "display_name": "English",
+            "id": "1146654567674912769",
+            "language_code": "EN"
+          }
+        ],
+        "id": "1146654567674912769",
+        "media_category": "AmplifyVideo"
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 429,
+          "title": "Example Title",
+          "type": "user"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Example Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  },
+  {
+    "endpoint": "/2/media/subtitles",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "deleted": false
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 200,
+          "title": "Playground Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

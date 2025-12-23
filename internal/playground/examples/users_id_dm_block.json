@@ -1,0 +1,36 @@
+[
+  {
+    "endpoint": "/2/users/{id}/dm/block",
+    "method": "POST",
+    "request": {},
+    "response": {
+      "data": {
+        "blocked": false
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 403,
+          "title": "Sample Title",
+          "type": "list"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 401,
+          "title": "Playground Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

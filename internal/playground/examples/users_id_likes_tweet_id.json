@@ -1,0 +1,41 @@
+[
+  {
+    "endpoint": "/2/users/{id}/likes/{tweet_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "liked": true
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 404,
+          "title": "Playground Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 403,
+          "title": "Example Title",
+          "type": "user"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 503,
+          "title": "Playground Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

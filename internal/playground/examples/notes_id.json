@@ -1,0 +1,26 @@
+[
+  {
+    "endpoint": "/2/notes/{id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "deleted": false
+      },
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 500,
+          "title": "Sample Title",
+          "type": "user"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

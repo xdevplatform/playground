@@ -1,0 +1,35 @@
+[
+  {
+    "endpoint": "/2/users/{id}/likes",
+    "method": "POST",
+    "response": {
+      "data": {
+        "liked": false
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 401,
+          "title": "Test Title",
+          "type": "user"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 401,
+          "title": "Playground Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

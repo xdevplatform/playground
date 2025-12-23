@@ -1,0 +1,42 @@
+[
+  {
+    "endpoint": "/2/lists",
+    "method": "POST",
+    "response": {
+      "data": {
+        "id": "1146654567674912769",
+        "name": "Test User"
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "media"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 201,
+          "title": "Example Title",
+          "type": "user"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 403,
+          "title": "Example Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "list.fields": [
+        "id",
+        "name",
+        "description",
+        "created_at",
+        "follower_count",
+        "member_count"
+      ]
+    }
+  }
+]

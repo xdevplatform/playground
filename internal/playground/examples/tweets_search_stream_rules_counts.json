@@ -1,0 +1,40 @@
+[
+  {
+    "endpoint": "/2/tweets/search/stream/rules/counts",
+    "method": "GET",
+    "response": {
+      "data": {
+        "all_project_client_apps": [
+          {
+            "client_app_id": "mock_string_value",
+            "rule_count": 102
+          }
+        ],
+        "cap_per_client_app": 447,
+        "cap_per_project": 19,
+        "client_app_rules_count": {
+          "client_app_id": "mock_string_value",
+          "rule_count": 509
+        },
+        "project_rules_count": 108
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 500,
+          "title": "Test Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

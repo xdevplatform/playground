@@ -1,0 +1,56 @@
+[
+  {
+    "endpoint": "/2/account_activity/webhooks/{webhook_id}/subscriptions/all",
+    "method": "GET",
+    "response": {
+      "data": {
+        "subscribed": false
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 500,
+          "title": "Playground Title",
+          "type": "list"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 401,
+          "title": "Test Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {}
+  },
+  {
+    "endpoint": "/2/account_activity/webhooks/{webhook_id}/subscriptions/all",
+    "method": "POST",
+    "response": {
+      "data": {
+        "subscribed": true
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 401,
+          "title": "Sample Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Test Title",
+          "type": "user"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 403,
+          "title": "Example Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

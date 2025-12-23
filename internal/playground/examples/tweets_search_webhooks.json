@@ -1,0 +1,52 @@
+[
+  {
+    "endpoint": "/2/tweets/search/webhooks",
+    "method": "GET",
+    "response": {
+      "data": {
+        "links": [
+          {
+            "application_id": "1764192610714",
+            "business_user_id": "1764192610714",
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "fields": [
+              "mock_string_value",
+              "mock_string_value"
+            ],
+            "instance_id": "1764192610714",
+            "webhook_id": "1764192610714"
+          },
+          {
+            "application_id": "1764192610714",
+            "business_user_id": "1764192610714",
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "fields": [
+              "mock_string_value",
+              "mock_string_value",
+              "mock_string_value"
+            ],
+            "instance_id": "1764192610714",
+            "webhook_id": "1764192610714"
+          }
+        ]
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

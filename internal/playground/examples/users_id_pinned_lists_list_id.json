@@ -1,0 +1,41 @@
+[
+  {
+    "endpoint": "/2/users/{id}/pinned_lists/{list_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "pinned": true
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 401,
+          "title": "Example Title",
+          "type": "user"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 503,
+          "title": "Sample Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {
+      "list.fields": [
+        "id",
+        "name",
+        "description",
+        "created_at"
+      ],
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

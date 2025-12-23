@@ -1,0 +1,41 @@
+[
+  {
+    "endpoint": "/2/media/{media_key}",
+    "method": "GET",
+    "response": {
+      "data": {
+        "height": 99,
+        "media_key": "mock_string_value",
+        "type": "tweet",
+        "width": 33
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 404,
+          "title": "Test Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 201,
+          "title": "Example Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 201,
+          "title": "Test Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

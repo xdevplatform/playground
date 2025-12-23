@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X API Playground</title>
+    <link rel="stylesheet" href="/playground/styles.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle">Confirm</h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="confirmModalConfirm">Confirm</button>
+                <button class="btn btn-secondary" id="confirmModalCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <img src="/playground/logo.svg" alt="X Logo" style="height: 28px; width: auto; flex-shrink: 0;">
+                    <h1 style="margin: 0;">API Playground</h1>
+                </div>
+                <div class="server-status-container">
+                    <div class="server-status" id="serverStatus" onmouseenter="showServerHealthDetails()" onmouseleave="hideServerHealthDetails()" onclick="toggleServerHealthDetails()" style="cursor: pointer; position: relative;">
+                        <span class="status-dot"></span>
+                        <span>Checking...</span>
+                    </div>
+                    <div id="serverHealthTooltip" class="server-health-tooltip" style="display: none;">
+                        <div class="loading">Loading health details...</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#api-builder" class="nav-item active" data-section="api-builder">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    Request Builder
+                </a>
+                <a href="#explorer" class="nav-item" data-section="explorer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    Data Explorer
+                </a>
+                <a href="#config" class="nav-item" data-section="config">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Request Builder Section -->
+            <section id="api-builder" class="content-section active">
+                <div class="section-header">
+                    <h2>Request Builder</h2>
+                </div>
+                <div class="api-builder-container">
+                    <div class="request-panel">
+                        <div class="request-form">
+                            <div class="form-group">
+                                <label>Method</label>
+                                <select id="requestMethod" class="select-input">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label id="endpointLabel">Endpoint</label>
+                                <select id="requestEndpoint" class="select-input" onchange="onEndpointSelected()">
+                                    <option value="">Select an endpoint...</option>
+                                </select>
+                                <div id="endpointInfo" class="endpoint-info" style="display: none; margin-top: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; font-size: 13px;">
+                                    <div id="endpointSummary" style="font-weight: 600; margin-bottom: 8px; color: var(--text-primary);"></div>
+                                    <div id="endpointDescription" style="color: var(--text-secondary); margin-bottom: 12px;"></div>
+                                    <div id="endpointParams" style="color: var(--text-muted);"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Query Parameters</label>
+                                <div id="queryParamsContainer" class="params-container">
+                                    <div class="param-row">
+                                        <input type="text" placeholder="key" class="param-key text-input">
+                                        <input type="text" placeholder="value" class="param-value text-input">
+                                        <button class="btn-icon" onclick="removeParam(this)">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-link" onclick="addQueryParam()">+ Add Custom Parameter</button>
+                            </div>
+                            <div class="form-group" id="requestBodyGroup" style="display: none;">
+                                <label>Request Body</label>
+                                <textarea id="requestBody" class="text-input code-textarea" rows="8" placeholder='{"text": "Hello, world!"}'></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Authentication</label>
+                                <div id="requestAuthContainer">
+                                    <select id="requestAuthMethod" class="text-input" onchange="updateAuthMethod('request')" style="margin-bottom: 8px;">
+                                        <option value="bearer">Bearer Token (OAuth 2.0 App-Only)</option>
+                                        <option value="oauth1">OAuth 1.0a User Context</option>
+                                        <option value="oauth2">OAuth 2.0 User Context</option>
+                                        <option value="none">No Authentication</option>
+                                    </select>
+                                    <div id="requestAuthFields">
+                                        <input type="text" id="requestAuth" class="text-input" placeholder="Bearer token" value="Bearer test">
+                                    </div>
+                                    <div id="requestAuthInfo" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" id="sendRequestBtn" onclick="sendRequest()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                                <span id="sendRequestBtnText">Send Request</span>
+                            </button>
+                            <button class="btn btn-danger btn-block" id="stopStreamBtn" onclick="stopStream()" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+                                </svg>
+                                Stop Stream
+                            </button>
+                        </div>
+                    </div>
+                    <div class="response-panel">
+                        <div class="request-command-panel" style="margin-bottom: 24px;">
+                            <div class="response-header">
+                                <h3>Request</h3>
+                                <div class="response-actions">
+                                    <select id="requestCommandType" class="select-input" style="margin-right: 8px; padding: 4px 8px; font-size: 13px;" onchange="updateRequestCommand()">
+                                        <option value="curl" selected>curl</option>
+                                    </select>
+                                    <button class="btn-icon" onclick="copyRequestCommand()" title="Copy command">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="requestCommandContent" class="response-content" style="max-height: 150px; font-size: 12px; padding: 12px;">
+                                <div class="empty-state" style="color: var(--text-muted); font-size: 13px;">Select an endpoint to see the command</div>
+                            </div>
+                        </div>
+                        <div class="response-header">
+                            <h3 id="responseHeaderTitle">Response</h3>
+                            <div class="response-actions">
+                                <span id="responseStatus" class="status-badge">-</span>
+                                <button class="btn-icon" id="clearResponseBtn" onclick="clearResponse()" title="Clear output" style="display: none;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                                <button class="btn-icon" id="copyResponseBtn" onclick="copyResponse()" title="Copy response">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="responseContent" class="response-content">
+                            <div class="empty-state">Send a request to see the response here</div>
+                        </div>
+                        <div id="streamContent" class="stream-content" style="display: none;">
+                            <div class="empty-state">Select a streaming endpoint and click "Start Stream" to begin</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="request-history">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0;">Request History</h3>
+                        <button class="btn btn-secondary btn-small" onclick="clearRequestHistory()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Clear History
+                        </button>
+                    </div>
+                    <div id="requestHistory" class="history-list"></div>
+                </div>
+            </section>
+
+            <!-- Data Explorer Section -->
+            <section id="explorer" class="content-section">
+                <div class="section-header">
+                    <h2>Data Explorer</h2>
+                    <button class="btn btn-primary" onclick="refreshExplorer()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+                
+                <!-- State Stats Grid with State Management Menu -->
+                <div style="display: flex; align-items: flex-start; gap: 24px; margin-bottom: 24px;">
+                    <div id="stateStatsGrid" class="state-stats-grid" style="flex: 1;"></div>
+                    <div style="flex-shrink: 0;">
+                        <div class="dropdown-menu-container">
+                            <button class="btn btn-secondary" onclick="toggleStateMenu()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="5" r="1"></circle>
+                                    <circle cx="12" cy="19" r="1"></circle>
+                                </svg>
+                                State Actions
+                            </button>
+                            <div id="stateMenu" class="dropdown-menu" style="display: none;">
+                                <button class="dropdown-item" onclick="exportState(); toggleStateMenu();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Export State
+                                </button>
+                                <button class="dropdown-item" onclick="document.getElementById('importFile').click(); toggleStateMenu();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    Import State
+                                </button>
+                                <button class="dropdown-item" onclick="saveState(); toggleStateMenu();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                        <polyline points="7 3 7 8 15 8"></polyline>
+                                    </svg>
+                                    Save State
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item danger" onclick="resetState(); toggleStateMenu();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <polyline points="1 20 1 14 7 14"></polyline>
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                    </svg>
+                                    Reset State
+                                </button>
+                                <button class="dropdown-item danger" onclick="deleteState(); toggleStateMenu();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Delete State
+                                </button>
+                            </div>
+                        </div>
+                        <div id="stateLastUpdated" style="margin-top: 8px; font-size: 11px; color: var(--text-secondary); text-align: center; opacity: 0.7;"></div>
+                    </div>
+                </div>
+                
+                <!-- Hidden file input for import -->
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileSelect(event)">
+                
+                <!-- Data Explorer Section -->
+                <div class="explorer-section">
+                    <!-- Search Bar inside Data Explorer -->
+                    <div class="explorer-search-bar" style="margin-bottom: 20px; display: flex; gap: 12px; align-items: center;">
+                        <select id="unifiedExplorerType" class="select-input" onchange="handleUnifiedSearch()" style="min-width: 150px; flex-shrink: 0;">
+                            <option value="users" selected>Users</option>
+                            <option value="tweets">Posts</option>
+                            <option value="lists">Lists</option>
+                            <option value="relationships">Relationships</option>
+                            <option value="spaces">Spaces</option>
+                            <option value="communities">Communities</option>
+                            <option value="media">Media</option>
+                            <option value="news">News</option>
+                            <option value="dm_conversations">DMs</option>
+                            <option value="search_stream_rules">Stream Rules</option>
+                        </select>
+                        <select id="relationshipTypeFilter" class="select-input" onchange="handleUnifiedSearch()" style="min-width: 150px; flex-shrink: 0; display: none;">
+                            <option value="all">All Relationships</option>
+                            <option value="bookmarks">Bookmarks</option>
+                            <option value="likes">Likes</option>
+                            <option value="following">Following</option>
+                            <option value="followers">Followers</option>
+                            <option value="reposts">Reposts</option>
+                            <option value="muting">Muting</option>
+                            <option value="blocking">Blocking</option>
+                            <option value="list_memberships">List Memberships</option>
+                            <option value="followed_lists">Followed Lists</option>
+                            <option value="pinned_lists">Pinned Lists</option>
+                        </select>
+                        <div class="search-input-wrapper" style="flex: 1; min-width: 0; position: relative;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 1;">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" id="unifiedExplorerSearch" class="text-input search-input-large" placeholder="Search..." oninput="handleUnifiedSearch()" style="width: 100%; padding-left: 48px; padding-right: 40px;">
+                            <div id="searchOperatorsInfo" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: help; z-index: 2;" onmouseenter="showSearchOperatorsTooltip(event)" onmouseleave="hideSearchOperatorsTooltip()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <path d="M12 17h.01"></path>
+                                </svg>
+                            </div>
+                            <div id="searchOperatorsTooltip" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 280px; max-width: 400px; font-size: 13px; line-height: 1.6;">
+                                <div style="font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Search Operators</div>
+                                <div id="searchOperatorsContent" style="color: var(--text-secondary);"></div>
+                            </div>
+                        </div>
+                        <button id="explorerViewToggle" class="btn btn-secondary" onclick="toggleExplorerView()" title="Toggle between formatted and JSON view" style="flex-shrink: 0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="explorerViewIcon">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                            <span id="explorerViewLabel">JSON View</span>
+                        </button>
+                    </div>
+                    <div class="explorer-content" id="explorerContent">
+                        <div class="empty-state">Select a data type and use the search bar to find data</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="config" class="content-section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="toggleConfigView()" id="toggleConfigViewBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span id="toggleConfigViewText">Edit Mode</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="loadConfig()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="config-content" id="configContent">
+                    <div class="loading">Loading configuration...</div>
+                </div>
+                <div id="configEditor" style="display: none;">
+                    <div class="config-editor-container">
+                        <div class="config-editor-tabs">
+                            <button class="config-tab active" onclick="switchConfigTab('form')" id="configTabForm">Form Editor</button>
+                            <button class="config-tab" onclick="switchConfigTab('json')" id="configTabJson">JSON Editor</button>
+                        </div>
+                        <div id="configFormEditor" class="config-editor-content"></div>
+                        <div id="configJsonEditor" class="config-editor-content" style="display: none;">
+                            <textarea id="configJsonTextarea" class="config-json-textarea" placeholder="Loading configuration..."></textarea>
+                        </div>
+                        <div class="config-editor-actions">
+                            <button class="btn btn-primary" onclick="saveConfig()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Save Settings
+                            </button>
+                            <button class="btn btn-secondary" onclick="cancelConfigEdit()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="/playground/app.js"></script>
+</body>
+</html>

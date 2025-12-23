@@ -1,0 +1,40 @@
+[
+  {
+    "endpoint": "/2/users/personalized_trends",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "category": "tweet_image",
+          "post_count": 831,
+          "trend_name": "My Playground List",
+          "trending_since": "mock_trending_since_value"
+        }
+      ],
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "user"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Test Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

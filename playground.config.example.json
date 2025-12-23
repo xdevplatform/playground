@@ -1,0 +1,22 @@
+{
+  "tweets": {
+    "texts": [
+      "Custom tweet text for your testing needs #custom",
+      "Another custom tweet with different content",
+      "You can add as many tweet texts as you want",
+      "These will be used instead of the default embedded texts",
+      "Perfect for domain-specific or language-specific testing"
+    ]
+  },
+  "users": {
+    "profiles": [
+      {
+        "username": "custom_user",
+        "name": "Custom User",
+        "description": "A custom user profile for testing",
+        "location": "Custom Location"
+      }
+    ]
+  }
+}
+

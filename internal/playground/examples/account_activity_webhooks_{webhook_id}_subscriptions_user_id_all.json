@@ -1,0 +1,20 @@
+[
+  {
+    "endpoint": "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "subscribed": true
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 400,
+          "title": "Test Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "endpoint": "/2/users/{id}/followed_lists/{list_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "following": true
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Playground Title",
+          "type": "user"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 404,
+          "title": "Sample Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "list.fields": [
+        "id",
+        "name",
+        "description",
+        "created_at"
+      ],
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

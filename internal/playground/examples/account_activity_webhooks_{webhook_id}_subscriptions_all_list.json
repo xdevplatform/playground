@@ -1,0 +1,36 @@
+[
+  {
+    "endpoint": "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list",
+    "method": "GET",
+    "response": {
+      "data": {
+        "application_id": "1764192610686",
+        "subscriptions": [
+          {
+            "user_id": "1764192610686"
+          },
+          {
+            "user_id": "1764192610686"
+          }
+        ],
+        "webhook_id": "1764192610686",
+        "webhook_url": "https://abs.twimg.com/icons/apple-touch-icon.png"
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 500,
+          "title": "Test Title",
+          "type": "user"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Example Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

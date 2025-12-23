@@ -1,0 +1,35 @@
+[
+  {
+    "endpoint": "/2/users/{source_user_id}/following/{target_user_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "following": true
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 401,
+          "title": "Playground Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 500,
+          "title": "Playground Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

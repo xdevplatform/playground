@@ -1,0 +1,31 @@
+[
+  {
+    "endpoint": "/2/media",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "height": 11,
+          "media_key": "mock_string_value",
+          "type": "media",
+          "width": 50
+        }
+      ],
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 500,
+          "title": "Sample Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Test Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

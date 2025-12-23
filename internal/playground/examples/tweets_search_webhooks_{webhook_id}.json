@@ -1,0 +1,66 @@
+[
+  {
+    "endpoint": "/2/tweets/search/webhooks/{webhook_id}",
+    "method": "POST",
+    "response": {
+      "data": {
+        "provisioned": false
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 503,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  },
+  {
+    "endpoint": "/2/tweets/search/webhooks/{webhook_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "deleted": true
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 503,
+          "title": "Test Title",
+          "type": "list"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "list"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 200,
+          "title": "Example Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

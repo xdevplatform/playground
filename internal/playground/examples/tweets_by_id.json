@@ -1,0 +1,31 @@
+[
+  {
+    "endpoint": "/2/tweets/{id}",
+    "method": "GET",
+    "response": {
+      "data": {
+        "id": "1234567890123456789",
+        "text": "This is an example tweet from the xurl playground. It demonstrates realistic tweet data structure.",
+        "created_at": "2024-01-15T10:30:00Z",
+        "author_id": "123456789",
+        "conversation_id": "1234567890123456789",
+        "in_reply_to_user_id": null,
+        "referenced_tweets": [],
+        "public_metrics": {
+          "retweet_count": 42,
+          "reply_count": 15,
+          "like_count": 128,
+          "quote_count": 3
+        },
+        "possibly_sensitive": false,
+        "lang": "en",
+        "source": "Twitter Web App",
+        "context_annotations": []
+      }
+    },
+    "fields": {
+      "tweet.fields": ["id", "text", "created_at", "author_id", "conversation_id", "public_metrics", "lang", "source"]
+    }
+  }
+]
+

@@ -1,0 +1,35 @@
+[
+  {
+    "endpoint": "/2/users/{id}/retweets/{source_tweet_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "retweeted": false
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 429,
+          "title": "Test Title",
+          "type": "list"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

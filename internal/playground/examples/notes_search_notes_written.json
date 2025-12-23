@@ -1,0 +1,54 @@
+[
+  {
+    "endpoint": "/2/notes/search/notes_written",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "id": "1146654567674912769",
+          "info": {
+            "classification": "misinformed_or_potentially_misleading",
+            "misleading_tags": [
+              "misinterpreted_satire",
+              "disputed_claim_as_fact"
+            ],
+            "text": "Hello from the playground! 🎮",
+            "trustworthy_sources": true
+          },
+          "note_info": false,
+          "post_id": "1346889436626259968",
+          "status": "insufficient_consensus",
+          "test_result": {
+            "evaluator_score_bucket": "mock_evaluator_score_bucket_value",
+            "evaluator_type": "user"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 500,
+          "title": "Sample Title",
+          "type": "media"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 401,
+          "title": "Sample Title",
+          "type": "user"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ],
+      "meta": {
+        "next_token": "mock_string_value",
+        "result_count": 439
+      }
+    },
+    "fields": {}
+  }
+]

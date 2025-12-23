@@ -1,0 +1,145 @@
+[
+  {
+    "endpoint": "/2/tweets/analytics",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "id": "1346889436626259968",
+          "timestamped_metrics": [
+            {
+              "metrics": {
+                "app_install_attempts": 14,
+                "app_opens": 473,
+                "detail_expands": 44,
+                "email_tweet": 184,
+                "engagements": 354,
+                "follows": 156,
+                "hashtag_clicks": 174,
+                "impressions": 767,
+                "likes": 167,
+                "link_clicks": 174,
+                "media_engagements": 146,
+                "media_views": 776,
+                "permalink_clicks": 685,
+                "profile_visits": 809,
+                "quote_tweets": 561,
+                "replies": 975,
+                "retweets": 882,
+                "url_clicks": 249,
+                "user_profile_clicks": 4
+              },
+              "timestamp": "2025-03-17T06:30:00Z"
+            }
+          ]
+        },
+        {
+          "id": "1346889436626259968",
+          "timestamped_metrics": [
+            {
+              "metrics": {
+                "app_install_attempts": 289,
+                "app_opens": 692,
+                "detail_expands": 237,
+                "email_tweet": 972,
+                "engagements": 53,
+                "follows": 959,
+                "hashtag_clicks": 653,
+                "impressions": 273,
+                "likes": 427,
+                "link_clicks": 545,
+                "media_engagements": 67,
+                "media_views": 886,
+                "permalink_clicks": 887,
+                "profile_visits": 482,
+                "quote_tweets": 352,
+                "replies": 881,
+                "retweets": 274,
+                "url_clicks": 368,
+                "user_profile_clicks": 83
+              },
+              "timestamp": "2025-03-17T06:30:00Z"
+            },
+            {
+              "metrics": {
+                "app_install_attempts": 17,
+                "app_opens": 81,
+                "detail_expands": 798,
+                "email_tweet": 403,
+                "engagements": 816,
+                "follows": 829,
+                "hashtag_clicks": 339,
+                "impressions": 772,
+                "likes": 907,
+                "link_clicks": 221,
+                "media_engagements": 729,
+                "media_views": 267,
+                "permalink_clicks": 347,
+                "profile_visits": 388,
+                "quote_tweets": 703,
+                "replies": 889,
+                "retweets": 553,
+                "url_clicks": 697,
+                "user_profile_clicks": 16
+              },
+              "timestamp": "2025-03-17T06:30:00Z"
+            },
+            {
+              "metrics": {
+                "app_install_attempts": 937,
+                "app_opens": 463,
+                "detail_expands": 758,
+                "email_tweet": 56,
+                "engagements": 388,
+                "follows": 371,
+                "hashtag_clicks": 236,
+                "impressions": 521,
+                "likes": 907,
+                "link_clicks": 105,
+                "media_engagements": 374,
+                "media_views": 658,
+                "permalink_clicks": 801,
+                "profile_visits": 211,
+                "quote_tweets": 941,
+                "replies": 616,
+                "retweets": 757,
+                "url_clicks": 438,
+                "user_profile_clicks": 29
+              },
+              "timestamp": "2025-03-17T06:30:00Z"
+            }
+          ]
+        }
+      ],
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 201,
+          "title": "Example Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 503,
+          "title": "Playground Title",
+          "type": "list"
+        }
+      ]
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

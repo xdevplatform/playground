@@ -1,0 +1,82 @@
+{
+  "tweets": {
+    "texts": [
+      "Just shipped a new feature! 🚀 Excited to see what the community thinks. #coding #dev",
+      "Reading about the latest developments in #AI. The future is fascinating. @tech_influencer",
+      "Had a great conversation about API design today. REST vs GraphQL - what are your thoughts? #webdev",
+      "Working on improving developer experience. What tools make your life easier? #devtools",
+      "New blog post is up! Check it out if you're interested in microservices architecture. https://example.com/blog",
+      "Open source contribution merged! 🎉 Thanks to everyone who reviewed. #opensource",
+      "Conference talk went well. Slides are available on my GitHub. @dev_advocate",
+      "Breaking: Major tech company announces new product. This could change everything. #technews",
+      "Just tried the new API and it's amazing. Great work by the team! @ai_researcher",
+      "Question for developers: What's your favorite programming language and why? #programming",
+      "Sharing some design inspiration I found today. Love this aesthetic. #design",
+      "Code review tip: Always check for edge cases. Saved me from a bug today. #coding",
+      "Documentation matters! Well-written docs can make or break a project. #dev",
+      "Testing in production? No, but we do have comprehensive test coverage. #testing",
+      "Performance optimization is an art. Small changes can have big impacts. #performance",
+      "Learning something new every day. That's what I love about this field. #learning",
+      "Community support is incredible. Thanks to everyone who helps others. #community",
+      "Security first! Always validate input and sanitize output. #security",
+      "Refactoring legacy code is challenging but rewarding. One step at a time. #refactoring",
+      "Pair programming session was productive. Two heads are better than one! #pairprogramming",
+      "Check out $AAPL earnings report. Interesting trends in tech stocks. #stocks",
+      "New feature launch! Excited to share this with @playground_user and the team. #launch",
+      "Hello world! Just testing out the playground API. This is great for development. #hello #testing",
+      "Hello everyone! Welcome to the X API playground. Perfect for testing your integrations. #hello #api",
+      "Hello from the playground! This mock server makes development so much easier. #hello #dev",
+      "Morning coffee and code. Perfect way to start the day ☕ #morningvibes",
+      "Just discovered an amazing new library that saved me hours of work. #grateful",
+      "Debugging session turned into a learning opportunity. Always something new! #debugging",
+      "Team standup was productive today. Great collaboration on the new project. #teamwork",
+      "Late night coding session. Sometimes the best ideas come at 2am 🌙 #nightowl",
+      "Reviewing pull requests and learning from different coding styles. #codequality",
+      "Attended an amazing tech meetup last night. Met some inspiring developers! #meetup",
+      "Starting a new side project this weekend. Excited to build something fun! #sideproject",
+      "Just hit 1000 stars on my GitHub repo! Thanks to everyone who supported it ⭐ #opensource",
+      "Reading through the latest RFC. Interesting proposals for the language. #standards",
+      "Spent the day optimizing database queries. Reduced query time by 80%! #optimization",
+      "New framework release looks promising. Can't wait to try it out. #framework",
+      "Code smells are everywhere in this legacy system. Time for a refactor! #legacycode",
+      "Just finished a marathon debugging session. Finally found the bug! 🐛 #debugging",
+      "Watching a great tech talk on distributed systems. So much to learn! #distributed",
+      "Experimenting with a new architecture pattern. Early results look good. #architecture",
+      "Code review feedback was spot on. Always appreciate constructive criticism. #codereview",
+      "Deployed a new feature to production. Monitoring closely for any issues. #deployment",
+      "Learning about event-driven architecture. Fascinating approach to system design. #events",
+      "Just wrote a comprehensive test suite. Coverage is now at 95%! #testing",
+      "Exploring new tools for CI/CD. Automation is the future. #cicd",
+      "Team retrospective was insightful. Great ideas for improving our workflow. #retrospective",
+      "Reading about microservices patterns. So many ways to approach it. #microservices",
+      "Just fixed a critical security vulnerability. Always stay vigilant! #security",
+      "New developer joined the team today. Excited to work together! #welcome",
+      "Spent hours on a tricky bug, only to realize it was a typo. Classic! 😅 #codinglife",
+      "Attending a virtual conference this week. Great lineup of speakers! #conference",
+      "Just released version 2.0 of my project. Major improvements and new features! #release",
+      "Code refactoring complete. Much cleaner and more maintainable now. #refactoring"
+    ]
+  },
+  "streaming": {
+    "default_delay_ms": 100
+  },
+  "rate_limit": {
+    "enabled": true,
+    "limit": 15,
+    "window_sec": 900
+  },
+  "auth": {
+    "disable_validation": false
+  },
+  "errors": {
+    "enabled": false,
+    "error_rate": 0.0,
+    "error_type": "rate_limit"
+  },
+  "persistence": {
+    "enabled": true,
+    "auto_save": true,
+    "save_interval": 60
+  }
+}
+

@@ -1,0 +1,82 @@
+[
+  {
+    "endpoint": "/2/media/upload",
+    "method": "GET",
+    "response": {
+      "data": {
+        "expires_after_secs": 686,
+        "id": "1146654567674912769",
+        "media_key": "mock_string_value",
+        "processing_info": {
+          "check_after_secs": 289,
+          "progress_percent": 58.67054995994469,
+          "state": "succeeded",
+          "type": false
+        },
+        "size": 558
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 500,
+          "title": "Test Title",
+          "type": "media"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 503,
+          "title": "Example Title",
+          "type": "user"
+        }
+      ],
+      "meta": 86
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  },
+  {
+    "endpoint": "/2/media/upload",
+    "method": "POST",
+    "response": {
+      "data": {
+        "expires_after_secs": 387,
+        "id": "1146654567674912769",
+        "media_key": "mock_string_value",
+        "processing_info": {
+          "check_after_secs": 400,
+          "progress_percent": 62.66215173583962,
+          "state": "succeeded",
+          "type": 52
+        },
+        "size": 827
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 403,
+          "title": "Playground Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 503,
+          "title": "Playground Title",
+          "type": "media"
+        }
+      ],
+      "meta": "default_value"
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

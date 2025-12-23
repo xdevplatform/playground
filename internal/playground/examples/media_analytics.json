@@ -1,0 +1,45 @@
+[
+  {
+    "endpoint": "/2/media/analytics",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "media_key": "mock_string_value",
+          "timestamped_metrics": [
+            {
+              "metrics": {
+                "cta_url_clicks": 852,
+                "cta_watch_clicks": 384,
+                "play_from_tap": 112,
+                "playback25": 992,
+                "playback50": 293,
+                "playback75": 884,
+                "playback_complete": 47,
+                "playback_start": 522,
+                "video_views": 411,
+                "watch_time_ms": 19
+              },
+              "timestamp": "2025-03-17T06:30:00Z"
+            }
+          ]
+        }
+      ],
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 200,
+          "title": "Sample Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

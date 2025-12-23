@@ -1,0 +1,32 @@
+[
+  {
+    "endpoint": "/2/evaluate_note",
+    "method": "POST",
+    "response": {
+      "data": {
+        "claim_opinion_score": 730.1218604866407
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 503,
+          "title": "Example Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 503,
+          "title": "Test Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 403,
+          "title": "Example Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

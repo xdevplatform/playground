@@ -1,0 +1,1980 @@
+[
+  {
+    "endpoint": "/2/lists/{id}/tweets",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "attachments": {
+            "media_keys": [
+              "mock_string_value",
+              "mock_string_value",
+              "mock_string_value"
+            ],
+            "media_source_tweet_id": [
+              "1346889436626259968",
+              "1346889436626259968"
+            ],
+            "poll_ids": [
+              "1365059861688410112",
+              "1365059861688410112",
+              "1365059861688410112"
+            ]
+          },
+          "author_id": "2244994945",
+          "community_id": "1146654567674912769",
+          "context_annotations": [
+            {
+              "domain": {
+                "description": "A sample description for the playground",
+                "id": "1764192610691",
+                "name": "Example Account"
+              },
+              "entity": {
+                "description": "Mock description for testing",
+                "id": "1764192610691",
+                "name": "Test User"
+              }
+            },
+            {
+              "domain": {
+                "description": "A sample description for the playground",
+                "id": "1764192610691",
+                "name": "Sample List"
+              },
+              "entity": {
+                "description": "Example profile description",
+                "id": "1764192610691",
+                "name": "Test User"
+              }
+            }
+          ],
+          "conversation_id": "1346889436626259968",
+          "created_at": "2025-11-26T13:30:10-08:00",
+          "display_text_range": [
+            9,
+            47
+          ],
+          "edit_controls": {
+            "editable_until": "2025-11-26T13:30:10-08:00",
+            "edits_remaining": 342,
+            "is_edit_eligible": false
+          },
+          "edit_history_tweet_ids": [
+            "1346889436626259968",
+            "1346889436626259968"
+          ],
+          "entities": {
+            "annotations": [
+              {
+                "end": 55,
+                "normalized_text": "Barack Obama",
+                "probability": 0.3718871389635841,
+                "start": 18,
+                "type": "Person"
+              },
+              {
+                "end": 74,
+                "normalized_text": "Barack Obama",
+                "probability": 0.03225108159236095,
+                "start": 86,
+                "type": "Person"
+              }
+            ],
+            "cashtags": [
+              {
+                "end": 98,
+                "start": 74,
+                "tag": "TWTR"
+              },
+              {
+                "end": 28,
+                "start": 18,
+                "tag": "TWTR"
+              }
+            ],
+            "hashtags": [
+              {
+                "end": 24,
+                "start": 63,
+                "tag": "MondayMotivation"
+              }
+            ],
+            "mentions": [
+              {
+                "end": 9,
+                "id": "2244994945",
+                "start": 9,
+                "username": "mock_string_value"
+              },
+              {
+                "end": 88,
+                "id": "2244994945",
+                "start": 61,
+                "username": "mock_string_value"
+              },
+              {
+                "end": 96,
+                "id": "2244994945",
+                "start": 71,
+                "username": "mock_string_value"
+              }
+            ],
+            "urls": [
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 52,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 80,
+                    "url": "https://example.com/resource",
+                    "width": 76
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 74,
+                "status": 560,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              },
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 50,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 98,
+                    "url": "https://example.com/resource",
+                    "width": 60
+                  },
+                  {
+                    "height": 9,
+                    "url": "https://example.com/resource",
+                    "width": 52
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 51,
+                "status": 445,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              }
+            ]
+          },
+          "geo": {
+            "coordinates": {
+              "coordinates": [
+                883.7903617754878,
+                96.25522138577551
+              ],
+              "type": "Point"
+            },
+            "place_id": "f7eb2fa2fea288b1"
+          },
+          "id": "1346889436626259968",
+          "in_reply_to_user_id": "2244994945",
+          "lang": "en",
+          "non_public_metrics": {
+            "impression_count": 475
+          },
+          "note_tweet": {
+            "entities": {
+              "cashtags": [
+                {
+                  "end": 2,
+                  "start": 35,
+                  "tag": "TWTR"
+                }
+              ],
+              "hashtags": [
+                {
+                  "end": 14,
+                  "start": 10,
+                  "tag": "MondayMotivation"
+                }
+              ],
+              "mentions": [
+                {
+                  "end": 14,
+                  "id": "2244994945",
+                  "start": 19,
+                  "username": "mock_string_value"
+                }
+              ],
+              "urls": [
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 86,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 64,
+                      "url": "https://example.com/resource",
+                      "width": 10
+                    },
+                    {
+                      "height": 38,
+                      "url": "https://example.com/resource",
+                      "width": 70
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 70,
+                  "status": 126,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                }
+              ]
+            },
+            "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i"
+          },
+          "organic_metrics": {
+            "impression_count": 37,
+            "like_count": 756,
+            "reply_count": 675,
+            "retweet_count": 714
+          },
+          "possibly_sensitive": true,
+          "promoted_metrics": {
+            "impression_count": 999,
+            "like_count": 519,
+            "reply_count": 624,
+            "retweet_count": 606
+          },
+          "public_metrics": {
+            "bookmark_count": 264,
+            "impression_count": 717,
+            "like_count": 674,
+            "quote_count": 79,
+            "reply_count": 81,
+            "retweet_count": 651
+          },
+          "referenced_tweets": [
+            {
+              "id": "1346889436626259968",
+              "type": "quoted"
+            }
+          ],
+          "reply_settings": "subscribers",
+          "scopes": {
+            "followers": false
+          },
+          "source": "Twitter for iPhone",
+          "suggested_source_links": [
+            {
+              "description": "This is a description of the website.",
+              "display_url": "twittercommunity.com/t/introducing-…",
+              "end": 28,
+              "expanded_url": "https://example.com/resource",
+              "images": [
+                {
+                  "height": 7,
+                  "url": "https://example.com/resource",
+                  "width": 44
+                },
+                {
+                  "height": 27,
+                  "url": "https://example.com/resource",
+                  "width": 44
+                }
+              ],
+              "media_key": "mock_string_value",
+              "start": 65,
+              "status": 153,
+              "title": "Introducing the v2 follow lookup endpoints",
+              "unwound_url": "https://example.com/resource",
+              "url": "https://example.com/resource"
+            },
+            {
+              "description": "This is a description of the website.",
+              "display_url": "twittercommunity.com/t/introducing-…",
+              "end": 78,
+              "expanded_url": "https://example.com/resource",
+              "images": [
+                {
+                  "height": 1,
+                  "url": "https://example.com/resource",
+                  "width": 61
+                }
+              ],
+              "media_key": "mock_string_value",
+              "start": 4,
+              "status": 483,
+              "title": "Introducing the v2 follow lookup endpoints",
+              "unwound_url": "https://example.com/resource",
+              "url": "https://example.com/resource"
+            },
+            {
+              "description": "This is a description of the website.",
+              "display_url": "twittercommunity.com/t/introducing-…",
+              "end": 12,
+              "expanded_url": "https://example.com/resource",
+              "images": [
+                {
+                  "height": 94,
+                  "url": "https://example.com/resource",
+                  "width": 59
+                },
+                {
+                  "height": 35,
+                  "url": "https://example.com/resource",
+                  "width": 42
+                }
+              ],
+              "media_key": "mock_string_value",
+              "start": 9,
+              "status": 345,
+              "title": "Introducing the v2 follow lookup endpoints",
+              "unwound_url": "https://example.com/resource",
+              "url": "https://example.com/resource"
+            }
+          ],
+          "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i",
+          "username": "mock_string_value",
+          "withheld": {
+            "copyright": false,
+            "country_codes": [
+              "US",
+              "US",
+              "US"
+            ],
+            "scope": "tweet"
+          }
+        },
+        {
+          "attachments": {
+            "media_keys": [
+              "mock_string_value",
+              "mock_string_value"
+            ],
+            "media_source_tweet_id": [
+              "1346889436626259968"
+            ],
+            "poll_ids": [
+              "1365059861688410112"
+            ]
+          },
+          "author_id": "2244994945",
+          "community_id": "1146654567674912769",
+          "context_annotations": [
+            {
+              "domain": {
+                "description": "Playground test description",
+                "id": "1764192610691",
+                "name": "My Playground List"
+              },
+              "entity": {
+                "description": "Playground test description",
+                "id": "1764192610691",
+                "name": "Test User"
+              }
+            },
+            {
+              "domain": {
+                "description": "A sample description for the playground",
+                "id": "1764192610691",
+                "name": "Demo Account"
+              },
+              "entity": {
+                "description": "Playground test description",
+                "id": "1764192610691",
+                "name": "Sample List"
+              }
+            },
+            {
+              "domain": {
+                "description": "Example profile description",
+                "id": "1764192610691",
+                "name": "Test User"
+              },
+              "entity": {
+                "description": "A sample description for the playground",
+                "id": "1764192610691",
+                "name": "Test User"
+              }
+            }
+          ],
+          "conversation_id": "1346889436626259968",
+          "created_at": "2025-11-26T13:30:10-08:00",
+          "display_text_range": [
+            69,
+            88,
+            46
+          ],
+          "edit_controls": {
+            "editable_until": "2025-11-26T13:30:10-08:00",
+            "edits_remaining": 77,
+            "is_edit_eligible": true
+          },
+          "edit_history_tweet_ids": [
+            "1346889436626259968",
+            "1346889436626259968"
+          ],
+          "entities": {
+            "annotations": [
+              {
+                "end": 42,
+                "normalized_text": "Barack Obama",
+                "probability": 0.6112932226826927,
+                "start": 84,
+                "type": "Person"
+              }
+            ],
+            "cashtags": [
+              {
+                "end": 88,
+                "start": 2,
+                "tag": "TWTR"
+              },
+              {
+                "end": 69,
+                "start": 67,
+                "tag": "TWTR"
+              },
+              {
+                "end": 44,
+                "start": 50,
+                "tag": "TWTR"
+              }
+            ],
+            "hashtags": [
+              {
+                "end": 6,
+                "start": 5,
+                "tag": "MondayMotivation"
+              },
+              {
+                "end": 46,
+                "start": 95,
+                "tag": "MondayMotivation"
+              },
+              {
+                "end": 4,
+                "start": 38,
+                "tag": "MondayMotivation"
+              }
+            ],
+            "mentions": [
+              {
+                "end": 50,
+                "id": "2244994945",
+                "start": 33,
+                "username": "mock_string_value"
+              },
+              {
+                "end": 96,
+                "id": "2244994945",
+                "start": 46,
+                "username": "mock_string_value"
+              },
+              {
+                "end": 35,
+                "id": "2244994945",
+                "start": 90,
+                "username": "mock_string_value"
+              }
+            ],
+            "urls": [
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 7,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 97,
+                    "url": "https://example.com/resource",
+                    "width": 75
+                  },
+                  {
+                    "height": 51,
+                    "url": "https://example.com/resource",
+                    "width": 18
+                  },
+                  {
+                    "height": 95,
+                    "url": "https://example.com/resource",
+                    "width": 41
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 39,
+                "status": 399,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              },
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 15,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 37,
+                    "url": "https://example.com/resource",
+                    "width": 21
+                  },
+                  {
+                    "height": 42,
+                    "url": "https://example.com/resource",
+                    "width": 56
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 46,
+                "status": 511,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              }
+            ]
+          },
+          "geo": {
+            "coordinates": {
+              "coordinates": [
+                946.1112012743031,
+                539.4071083173429,
+                1.433501593724611
+              ],
+              "type": "Point"
+            },
+            "place_id": "f7eb2fa2fea288b1"
+          },
+          "id": "1346889436626259968",
+          "in_reply_to_user_id": "2244994945",
+          "lang": "en",
+          "non_public_metrics": {
+            "impression_count": 633
+          },
+          "note_tweet": {
+            "entities": {
+              "cashtags": [
+                {
+                  "end": 66,
+                  "start": 74,
+                  "tag": "TWTR"
+                },
+                {
+                  "end": 40,
+                  "start": 13,
+                  "tag": "TWTR"
+                }
+              ],
+              "hashtags": [
+                {
+                  "end": 92,
+                  "start": 47,
+                  "tag": "MondayMotivation"
+                }
+              ],
+              "mentions": [
+                {
+                  "end": 2,
+                  "id": "2244994945",
+                  "start": 32,
+                  "username": "mock_string_value"
+                },
+                {
+                  "end": 20,
+                  "id": "2244994945",
+                  "start": 58,
+                  "username": "mock_string_value"
+                },
+                {
+                  "end": 87,
+                  "id": "2244994945",
+                  "start": 32,
+                  "username": "mock_string_value"
+                }
+              ],
+              "urls": [
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 62,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 70,
+                      "url": "https://example.com/resource",
+                      "width": 44
+                    },
+                    {
+                      "height": 43,
+                      "url": "https://example.com/resource",
+                      "width": 95
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 46,
+                  "status": 184,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                },
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 6,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 32,
+                      "url": "https://example.com/resource",
+                      "width": 87
+                    },
+                    {
+                      "height": 79,
+                      "url": "https://example.com/resource",
+                      "width": 71
+                    },
+                    {
+                      "height": 29,
+                      "url": "https://example.com/resource",
+                      "width": 51
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 83,
+                  "status": 545,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                }
+              ]
+            },
+            "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i"
+          },
+          "organic_metrics": {
+            "impression_count": 463,
+            "like_count": 162,
+            "reply_count": 969,
+            "retweet_count": 9
+          },
+          "possibly_sensitive": true,
+          "promoted_metrics": {
+            "impression_count": 925,
+            "like_count": 169,
+            "reply_count": 30,
+            "retweet_count": 530
+          },
+          "public_metrics": {
+            "bookmark_count": 100,
+            "impression_count": 134,
+            "like_count": 336,
+            "quote_count": 746,
+            "reply_count": 713,
+            "retweet_count": 525
+          },
+          "referenced_tweets": [
+            {
+              "id": "1346889436626259968",
+              "type": "retweeted"
+            }
+          ],
+          "reply_settings": "mentionedUsers",
+          "scopes": {
+            "followers": true
+          },
+          "source": "xurl playground",
+          "suggested_source_links": [
+            {
+              "description": "This is a description of the website.",
+              "display_url": "twittercommunity.com/t/introducing-…",
+              "end": 97,
+              "expanded_url": "https://example.com/resource",
+              "images": [
+                {
+                  "height": 82,
+                  "url": "https://example.com/resource",
+                  "width": 33
+                },
+                {
+                  "height": 81,
+                  "url": "https://example.com/resource",
+                  "width": 47
+                },
+                {
+                  "height": 68,
+                  "url": "https://example.com/resource",
+                  "width": 53
+                }
+              ],
+              "media_key": "mock_string_value",
+              "start": 44,
+              "status": 150,
+              "title": "Introducing the v2 follow lookup endpoints",
+              "unwound_url": "https://example.com/resource",
+              "url": "https://example.com/resource"
+            }
+          ],
+          "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i",
+          "username": "mock_string_value",
+          "withheld": {
+            "copyright": false,
+            "country_codes": [
+              "US",
+              "US"
+            ],
+            "scope": "tweet"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 200,
+          "title": "Example Title",
+          "type": "tweet"
+        }
+      ],
+      "includes": {
+        "media": [
+          {
+            "height": 46,
+            "media_key": "mock_string_value",
+            "type": "tweet",
+            "width": 97
+          },
+          {
+            "height": 68,
+            "media_key": "mock_string_value",
+            "type": "tweet",
+            "width": 20
+          }
+        ],
+        "places": [
+          {
+            "contained_within": [
+              "f7eb2fa2fea288b1"
+            ],
+            "country": "United States",
+            "country_code": "US",
+            "full_name": "Lakewood, CO",
+            "geo": {
+              "bbox": [
+                -163.07895442778153,
+                5.740237590246791,
+                -109.55443574127898,
+                -26.22350642735628
+              ],
+              "geometry": {
+                "coordinates": [
+                  844.7070351459978,
+                  38.87175867213491
+                ],
+                "type": "Point"
+              },
+              "properties": {
+                "created_at": "2025-11-26T13:30:10-08:00",
+                "id": "1764192610691"
+              },
+              "type": "Feature"
+            },
+            "id": "f7eb2fa2fea288b1",
+            "name": "Lakewood",
+            "place_type": "admin"
+          },
+          {
+            "contained_within": [
+              "f7eb2fa2fea288b1",
+              "f7eb2fa2fea288b1"
+            ],
+            "country": "United States",
+            "country_code": "US",
+            "full_name": "Lakewood, CO",
+            "geo": {
+              "bbox": [
+                -163.77828601215677,
+                156.15399058011607,
+                168.40891397340053,
+                -163.367931653961
+              ],
+              "geometry": {
+                "coordinates": [
+                  346.4625035310566,
+                  846.5575991144939
+                ],
+                "type": "Point"
+              },
+              "properties": {
+                "created_at": "2025-11-26T13:30:10-08:00",
+                "id": "1764192610691"
+              },
+              "type": "Feature"
+            },
+            "id": "f7eb2fa2fea288b1",
+            "name": "Lakewood",
+            "place_type": "neighborhood"
+          },
+          {
+            "contained_within": [
+              "f7eb2fa2fea288b1",
+              "f7eb2fa2fea288b1"
+            ],
+            "country": "United States",
+            "country_code": "US",
+            "full_name": "Lakewood, CO",
+            "geo": {
+              "bbox": [
+                -153.10530869849572,
+                8.88729554624966,
+                -45.559431297083854,
+                -124.44031360914374
+              ],
+              "geometry": {
+                "coordinates": [
+                  937.3420952464417,
+                  143.56858353704874,
+                  463.15306612102466
+                ],
+                "type": "Point"
+              },
+              "properties": {
+                "created_at": "2025-11-26T13:30:10-08:00",
+                "id": "1764192610691"
+              },
+              "type": "Feature"
+            },
+            "id": "f7eb2fa2fea288b1",
+            "name": "Lakewood",
+            "place_type": "unknown"
+          }
+        ],
+        "polls": [
+          {
+            "duration_minutes": 8460,
+            "end_datetime": "2025-11-26T13:30:10-08:00",
+            "id": "1365059861688410112",
+            "options": [
+              {
+                "label": "mock_string_value",
+                "position": 163,
+                "votes": 719
+              },
+              {
+                "label": "mock_string_value",
+                "position": 19,
+                "votes": 748
+              }
+            ],
+            "voting_status": "open"
+          }
+        ],
+        "topics": [
+          {
+            "description": "All about technology",
+            "id": "mock_string_value",
+            "name": "Technology"
+          }
+        ],
+        "tweets": [
+          {
+            "attachments": {
+              "media_keys": [
+                "mock_string_value",
+                "mock_string_value"
+              ],
+              "media_source_tweet_id": [
+                "1346889436626259968"
+              ],
+              "poll_ids": [
+                "1365059861688410112",
+                "1365059861688410112"
+              ]
+            },
+            "author_id": "2244994945",
+            "community_id": "1146654567674912769",
+            "context_annotations": [
+              {
+                "domain": {
+                  "description": "Mock description for testing",
+                  "id": "1764192610691",
+                  "name": "Test User"
+                },
+                "entity": {
+                  "description": "Mock description for testing",
+                  "id": "1764192610691",
+                  "name": "Example Account"
+                }
+              },
+              {
+                "domain": {
+                  "description": "A sample description for the playground",
+                  "id": "1764192610691",
+                  "name": "Example Account"
+                },
+                "entity": {
+                  "description": "Example profile description",
+                  "id": "1764192610691",
+                  "name": "Playground User"
+                }
+              }
+            ],
+            "conversation_id": "1346889436626259968",
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "display_text_range": [
+              36,
+              66
+            ],
+            "edit_controls": {
+              "editable_until": "2025-11-26T13:30:10-08:00",
+              "edits_remaining": 150,
+              "is_edit_eligible": false
+            },
+            "edit_history_tweet_ids": [
+              "1346889436626259968",
+              "1346889436626259968"
+            ],
+            "entities": {
+              "annotations": [
+                {
+                  "end": 84,
+                  "normalized_text": "Barack Obama",
+                  "probability": 0.703048961228935,
+                  "start": 37,
+                  "type": "Person"
+                }
+              ],
+              "cashtags": [
+                {
+                  "end": 88,
+                  "start": 91,
+                  "tag": "TWTR"
+                },
+                {
+                  "end": 19,
+                  "start": 73,
+                  "tag": "TWTR"
+                }
+              ],
+              "hashtags": [
+                {
+                  "end": 69,
+                  "start": 32,
+                  "tag": "MondayMotivation"
+                }
+              ],
+              "mentions": [
+                {
+                  "end": 70,
+                  "id": "2244994945",
+                  "start": 41,
+                  "username": "mock_string_value"
+                }
+              ],
+              "urls": [
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 73,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 24,
+                      "url": "https://example.com/resource",
+                      "width": 46
+                    },
+                    {
+                      "height": 55,
+                      "url": "https://example.com/resource",
+                      "width": 81
+                    },
+                    {
+                      "height": 23,
+                      "url": "https://example.com/resource",
+                      "width": 5
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 81,
+                  "status": 522,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                },
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 41,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 99,
+                      "url": "https://example.com/resource",
+                      "width": 17
+                    },
+                    {
+                      "height": 39,
+                      "url": "https://example.com/resource",
+                      "width": 37
+                    },
+                    {
+                      "height": 36,
+                      "url": "https://example.com/resource",
+                      "width": 83
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 90,
+                  "status": 121,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                },
+                {
+                  "description": "This is a description of the website.",
+                  "display_url": "twittercommunity.com/t/introducing-…",
+                  "end": 35,
+                  "expanded_url": "https://example.com/resource",
+                  "images": [
+                    {
+                      "height": 61,
+                      "url": "https://example.com/resource",
+                      "width": 15
+                    },
+                    {
+                      "height": 70,
+                      "url": "https://example.com/resource",
+                      "width": 89
+                    }
+                  ],
+                  "media_key": "mock_string_value",
+                  "start": 14,
+                  "status": 318,
+                  "title": "Introducing the v2 follow lookup endpoints",
+                  "unwound_url": "https://example.com/resource",
+                  "url": "https://example.com/resource"
+                }
+              ]
+            },
+            "geo": {
+              "coordinates": {
+                "coordinates": [
+                  968.9927379818167,
+                  603.8801624302689
+                ],
+                "type": "Point"
+              },
+              "place_id": "f7eb2fa2fea288b1"
+            },
+            "id": "1346889436626259968",
+            "in_reply_to_user_id": "2244994945",
+            "lang": "en",
+            "non_public_metrics": {
+              "impression_count": 985
+            },
+            "note_tweet": {
+              "entities": {
+                "cashtags": [
+                  {
+                    "end": 64,
+                    "start": 59,
+                    "tag": "TWTR"
+                  }
+                ],
+                "hashtags": [
+                  {
+                    "end": 69,
+                    "start": 42,
+                    "tag": "MondayMotivation"
+                  },
+                  {
+                    "end": 96,
+                    "start": 71,
+                    "tag": "MondayMotivation"
+                  }
+                ],
+                "mentions": [
+                  {
+                    "end": 15,
+                    "id": "2244994945",
+                    "start": 86,
+                    "username": "mock_string_value"
+                  },
+                  {
+                    "end": 82,
+                    "id": "2244994945",
+                    "start": 64,
+                    "username": "mock_string_value"
+                  },
+                  {
+                    "end": 17,
+                    "id": "2244994945",
+                    "start": 78,
+                    "username": "mock_string_value"
+                  }
+                ],
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 18,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 91,
+                        "url": "https://example.com/resource",
+                        "width": 66
+                      },
+                      {
+                        "height": 0,
+                        "url": "https://example.com/resource",
+                        "width": 39
+                      },
+                      {
+                        "height": 18,
+                        "url": "https://example.com/resource",
+                        "width": 97
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 66,
+                    "status": 388,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 1,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 5,
+                        "url": "https://example.com/resource",
+                        "width": 22
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 23,
+                    "status": 463,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 54,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 98,
+                        "url": "https://example.com/resource",
+                        "width": 98
+                      },
+                      {
+                        "height": 52,
+                        "url": "https://example.com/resource",
+                        "width": 11
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 87,
+                    "status": 288,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              },
+              "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i"
+            },
+            "organic_metrics": {
+              "impression_count": 169,
+              "like_count": 802,
+              "reply_count": 701,
+              "retweet_count": 305
+            },
+            "possibly_sensitive": false,
+            "promoted_metrics": {
+              "impression_count": 192,
+              "like_count": 837,
+              "reply_count": 554,
+              "retweet_count": 213
+            },
+            "public_metrics": {
+              "bookmark_count": 797,
+              "impression_count": 221,
+              "like_count": 407,
+              "quote_count": 800,
+              "reply_count": 763,
+              "retweet_count": 87
+            },
+            "referenced_tweets": [
+              {
+                "id": "1346889436626259968",
+                "type": "retweeted"
+              },
+              {
+                "id": "1346889436626259968",
+                "type": "quoted"
+              }
+            ],
+            "reply_settings": "verified",
+            "scopes": {
+              "followers": false
+            },
+            "source": "xurl playground",
+            "suggested_source_links": [
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 85,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 81,
+                    "url": "https://example.com/resource",
+                    "width": 96
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 3,
+                "status": 310,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              },
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 2,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 31,
+                    "url": "https://example.com/resource",
+                    "width": 92
+                  },
+                  {
+                    "height": 93,
+                    "url": "https://example.com/resource",
+                    "width": 64
+                  },
+                  {
+                    "height": 25,
+                    "url": "https://example.com/resource",
+                    "width": 56
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 23,
+                "status": 326,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              },
+              {
+                "description": "This is a description of the website.",
+                "display_url": "twittercommunity.com/t/introducing-…",
+                "end": 14,
+                "expanded_url": "https://example.com/resource",
+                "images": [
+                  {
+                    "height": 24,
+                    "url": "https://example.com/resource",
+                    "width": 49
+                  }
+                ],
+                "media_key": "mock_string_value",
+                "start": 17,
+                "status": 124,
+                "title": "Introducing the v2 follow lookup endpoints",
+                "unwound_url": "https://example.com/resource",
+                "url": "https://example.com/resource"
+              }
+            ],
+            "text": "Learn how to use the user Tweet timeline and user mention timeline endpoints in the X API v2 to explore Tweet\\u2026 https:\\/\\/t.co\\/56a0vZUx7i",
+            "username": "mock_string_value",
+            "withheld": {
+              "copyright": true,
+              "country_codes": [
+                "US"
+              ],
+              "scope": "user"
+            }
+          }
+        ],
+        "users": [
+          {
+            "affiliation": {
+              "badge_url": "https://example.com/resource",
+              "description": "Mock description for testing",
+              "url": "https://example.com/resource",
+              "user_id": [
+                "2244994945"
+              ]
+            },
+            "connection_status": [
+              "blocking",
+              "follow_request_sent",
+              "follow_request_received"
+            ],
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "description": "Playground test description",
+            "entities": {
+              "description": {
+                "annotations": [
+                  {
+                    "end": 34,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.5377538435325105,
+                    "start": 10,
+                    "type": "Person"
+                  },
+                  {
+                    "end": 79,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.02483764516272042,
+                    "start": 48,
+                    "type": "Person"
+                  }
+                ],
+                "cashtags": [
+                  {
+                    "end": 4,
+                    "start": 11,
+                    "tag": "TWTR"
+                  },
+                  {
+                    "end": 50,
+                    "start": 8,
+                    "tag": "TWTR"
+                  }
+                ],
+                "hashtags": [
+                  {
+                    "end": 80,
+                    "start": 46,
+                    "tag": "MondayMotivation"
+                  },
+                  {
+                    "end": 70,
+                    "start": 27,
+                    "tag": "MondayMotivation"
+                  }
+                ],
+                "mentions": [
+                  {
+                    "end": 37,
+                    "id": "2244994945",
+                    "start": 20,
+                    "username": "mock_string_value"
+                  }
+                ],
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 64,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 90,
+                        "url": "https://example.com/resource",
+                        "width": 2
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 64,
+                    "status": 278,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 30,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 87,
+                        "url": "https://example.com/resource",
+                        "width": 99
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 84,
+                    "status": 475,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              },
+              "url": {
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 57,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 25,
+                        "url": "https://example.com/resource",
+                        "width": 6
+                      },
+                      {
+                        "height": 15,
+                        "url": "https://example.com/resource",
+                        "width": 58
+                      },
+                      {
+                        "height": 22,
+                        "url": "https://example.com/resource",
+                        "width": 66
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 70,
+                    "status": 487,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 44,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 53,
+                        "url": "https://example.com/resource",
+                        "width": 87
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 1,
+                    "status": 337,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 44,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 50,
+                        "url": "https://example.com/resource",
+                        "width": 60
+                      },
+                      {
+                        "height": 95,
+                        "url": "https://example.com/resource",
+                        "width": 8
+                      },
+                      {
+                        "height": 2,
+                        "url": "https://example.com/resource",
+                        "width": 37
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 72,
+                    "status": 301,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              }
+            },
+            "id": "2244994945",
+            "location": "Tokyo, Japan",
+            "most_recent_tweet_id": "1346889436626259968",
+            "name": "Example Account",
+            "pinned_tweet_id": "1346889436626259968",
+            "profile_banner_url": "https://example.com/resource",
+            "profile_image_url": "https://example.com/resource",
+            "protected": true,
+            "public_metrics": {
+              "followers_count": 17,
+              "following_count": 444,
+              "like_count": 926,
+              "listed_count": 729,
+              "tweet_count": 425
+            },
+            "receives_your_dm": false,
+            "subscription_type": "Basic",
+            "url": "https://pbs.twimg.com/profile_images/example.jpg",
+            "username": "mock_string_value",
+            "verified": false,
+            "verified_type": "blue",
+            "withheld": {
+              "country_codes": [
+                "US"
+              ],
+              "scope": "user"
+            }
+          },
+          {
+            "affiliation": {
+              "badge_url": "https://example.com/resource",
+              "description": "Mock description for testing",
+              "url": "https://example.com/resource",
+              "user_id": [
+                "2244994945",
+                "2244994945"
+              ]
+            },
+            "connection_status": [
+              "followed_by",
+              "follow_request_sent"
+            ],
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "description": "Playground test description",
+            "entities": {
+              "description": {
+                "annotations": [
+                  {
+                    "end": 10,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.43131567652714337,
+                    "start": 84,
+                    "type": "Person"
+                  },
+                  {
+                    "end": 47,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.09170537308031072,
+                    "start": 66,
+                    "type": "Person"
+                  }
+                ],
+                "cashtags": [
+                  {
+                    "end": 42,
+                    "start": 92,
+                    "tag": "TWTR"
+                  },
+                  {
+                    "end": 17,
+                    "start": 5,
+                    "tag": "TWTR"
+                  },
+                  {
+                    "end": 27,
+                    "start": 79,
+                    "tag": "TWTR"
+                  }
+                ],
+                "hashtags": [
+                  {
+                    "end": 80,
+                    "start": 71,
+                    "tag": "MondayMotivation"
+                  }
+                ],
+                "mentions": [
+                  {
+                    "end": 8,
+                    "id": "2244994945",
+                    "start": 6,
+                    "username": "mock_string_value"
+                  },
+                  {
+                    "end": 45,
+                    "id": "2244994945",
+                    "start": 94,
+                    "username": "mock_string_value"
+                  }
+                ],
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 64,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 87,
+                        "url": "https://example.com/resource",
+                        "width": 74
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 51,
+                    "status": 194,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 8,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 54,
+                        "url": "https://example.com/resource",
+                        "width": 52
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 86,
+                    "status": 591,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 28,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 43,
+                        "url": "https://example.com/resource",
+                        "width": 16
+                      },
+                      {
+                        "height": 12,
+                        "url": "https://example.com/resource",
+                        "width": 8
+                      },
+                      {
+                        "height": 15,
+                        "url": "https://example.com/resource",
+                        "width": 49
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 72,
+                    "status": 450,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              },
+              "url": {
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 17,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 10,
+                        "url": "https://example.com/resource",
+                        "width": 34
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 76,
+                    "status": 500,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 55,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 90,
+                        "url": "https://example.com/resource",
+                        "width": 73
+                      },
+                      {
+                        "height": 92,
+                        "url": "https://example.com/resource",
+                        "width": 50
+                      },
+                      {
+                        "height": 56,
+                        "url": "https://example.com/resource",
+                        "width": 34
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 42,
+                    "status": 170,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              }
+            },
+            "id": "2244994945",
+            "location": "San Francisco, CA",
+            "most_recent_tweet_id": "1346889436626259968",
+            "name": "Test User",
+            "pinned_tweet_id": "1346889436626259968",
+            "profile_banner_url": "https://example.com/resource",
+            "profile_image_url": "https://example.com/resource",
+            "protected": true,
+            "public_metrics": {
+              "followers_count": 574,
+              "following_count": 963,
+              "like_count": 531,
+              "listed_count": 462,
+              "tweet_count": 931
+            },
+            "receives_your_dm": false,
+            "subscription_type": "Premium",
+            "url": "https://pbs.twimg.com/profile_images/example.jpg",
+            "username": "mock_string_value",
+            "verified": true,
+            "verified_type": "business",
+            "withheld": {
+              "country_codes": [
+                "US",
+                "US",
+                "US"
+              ],
+              "scope": "user"
+            }
+          },
+          {
+            "affiliation": {
+              "badge_url": "https://example.com/resource",
+              "description": "Mock description for testing",
+              "url": "https://example.com/resource",
+              "user_id": [
+                "2244994945",
+                "2244994945",
+                "2244994945"
+              ]
+            },
+            "connection_status": [
+              "follow_request_received",
+              "follow_request_received"
+            ],
+            "created_at": "2025-11-26T13:30:10-08:00",
+            "description": "A sample description for the playground",
+            "entities": {
+              "description": {
+                "annotations": [
+                  {
+                    "end": 37,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.7411898795327825,
+                    "start": 90,
+                    "type": "Person"
+                  },
+                  {
+                    "end": 8,
+                    "normalized_text": "Barack Obama",
+                    "probability": 0.35339765226519493,
+                    "start": 27,
+                    "type": "Person"
+                  }
+                ],
+                "cashtags": [
+                  {
+                    "end": 89,
+                    "start": 8,
+                    "tag": "TWTR"
+                  },
+                  {
+                    "end": 93,
+                    "start": 89,
+                    "tag": "TWTR"
+                  },
+                  {
+                    "end": 86,
+                    "start": 43,
+                    "tag": "TWTR"
+                  }
+                ],
+                "hashtags": [
+                  {
+                    "end": 50,
+                    "start": 68,
+                    "tag": "MondayMotivation"
+                  },
+                  {
+                    "end": 66,
+                    "start": 59,
+                    "tag": "MondayMotivation"
+                  }
+                ],
+                "mentions": [
+                  {
+                    "end": 32,
+                    "id": "2244994945",
+                    "start": 24,
+                    "username": "mock_string_value"
+                  },
+                  {
+                    "end": 3,
+                    "id": "2244994945",
+                    "start": 26,
+                    "username": "mock_string_value"
+                  }
+                ],
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 9,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 82,
+                        "url": "https://example.com/resource",
+                        "width": 25
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 99,
+                    "status": 424,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 91,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 50,
+                        "url": "https://example.com/resource",
+                        "width": 60
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 15,
+                    "status": 202,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              },
+              "url": {
+                "urls": [
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 63,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 62,
+                        "url": "https://example.com/resource",
+                        "width": 35
+                      },
+                      {
+                        "height": 10,
+                        "url": "https://example.com/resource",
+                        "width": 95
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 30,
+                    "status": 268,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  },
+                  {
+                    "description": "This is a description of the website.",
+                    "display_url": "twittercommunity.com/t/introducing-…",
+                    "end": 51,
+                    "expanded_url": "https://example.com/resource",
+                    "images": [
+                      {
+                        "height": 58,
+                        "url": "https://example.com/resource",
+                        "width": 9
+                      },
+                      {
+                        "height": 24,
+                        "url": "https://example.com/resource",
+                        "width": 19
+                      }
+                    ],
+                    "media_key": "mock_string_value",
+                    "start": 71,
+                    "status": 286,
+                    "title": "Introducing the v2 follow lookup endpoints",
+                    "unwound_url": "https://example.com/resource",
+                    "url": "https://example.com/resource"
+                  }
+                ]
+              }
+            },
+            "id": "2244994945",
+            "location": "London, UK",
+            "most_recent_tweet_id": "1346889436626259968",
+            "name": "Sample List",
+            "pinned_tweet_id": "1346889436626259968",
+            "profile_banner_url": "https://example.com/resource",
+            "profile_image_url": "https://example.com/resource",
+            "protected": true,
+            "public_metrics": {
+              "followers_count": 596,
+              "following_count": 981,
+              "like_count": 528,
+              "listed_count": 278,
+              "tweet_count": 453
+            },
+            "receives_your_dm": true,
+            "subscription_type": "Basic",
+            "url": "https://pbs.twimg.com/profile_images/example.jpg",
+            "username": "mock_string_value",
+            "verified": false,
+            "verified_type": "government",
+            "withheld": {
+              "country_codes": [
+                "US",
+                "US",
+                "US"
+              ],
+              "scope": "user"
+            }
+          }
+        ]
+      },
+      "meta": {
+        "next_token": "mock_string_value",
+        "previous_token": "mock_string_value",
+        "result_count": 200
+      }
+    },
+    "fields": {
+      "list.fields": [
+        "id",
+        "name",
+        "description",
+        "created_at",
+        "follower_count",
+        "member_count"
+      ],
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

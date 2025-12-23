@@ -1,0 +1,27 @@
+[
+  {
+    "endpoint": "/2/trends/by/woeid/{woeid}",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "trend_name": "Sample List",
+          "tweet_count": 990
+        },
+        {
+          "trend_name": "Sample List",
+          "tweet_count": 81
+        }
+      ],
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

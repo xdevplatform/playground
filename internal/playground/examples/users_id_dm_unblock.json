@@ -1,0 +1,42 @@
+[
+  {
+    "endpoint": "/2/users/{id}/dm/unblock",
+    "method": "POST",
+    "request": {},
+    "response": {
+      "data": {
+        "blocked": true
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 201,
+          "title": "Sample Title",
+          "type": "list"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 201,
+          "title": "Example Title",
+          "type": "list"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 400,
+          "title": "Test Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

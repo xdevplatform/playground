@@ -1,0 +1,48 @@
+[
+  {
+    "endpoint": "/2/media/upload/initialize",
+    "method": "POST",
+    "response": {
+      "data": {
+        "expires_after_secs": 586,
+        "id": "1146654567674912769",
+        "media_key": "mock_string_value",
+        "processing_info": {
+          "check_after_secs": 185,
+          "progress_percent": 82.25580290748242,
+          "state": "pending",
+          "type": 0
+        },
+        "size": 434
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 400,
+          "title": "Playground Title",
+          "type": "list"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 200,
+          "title": "Sample Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 404,
+          "title": "Playground Title",
+          "type": "media"
+        }
+      ],
+      "meta": false
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

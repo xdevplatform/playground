@@ -1,0 +1,29 @@
+[
+  {
+    "endpoint": "/2/users/{id}",
+    "method": "GET",
+    "response": {
+      "data": {
+        "id": "123456789",
+        "name": "Example User",
+        "username": "example_user",
+        "description": "An example user profile",
+        "created_at": "2020-01-01T00:00:00Z",
+        "location": "New York, NY",
+        "url": "https://example.com/profile",
+        "verified": false,
+        "protected": false,
+        "public_metrics": {
+          "followers_count": 5000,
+          "following_count": 1000,
+          "tweet_count": 1200,
+          "listed_count": 50
+        }
+      }
+    },
+    "fields": {
+      "user.fields": ["id", "name", "username", "description", "created_at", "location", "url", "verified", "protected", "public_metrics"]
+    }
+  }
+]
+

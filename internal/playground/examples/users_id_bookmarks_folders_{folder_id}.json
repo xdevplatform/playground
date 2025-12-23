@@ -1,0 +1,34 @@
+[
+  {
+    "endpoint": "/2/users/{id}/bookmarks/folders/{folder_id}",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "id": "1346889436626259968"
+        }
+      ],
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 404,
+          "title": "Sample Title",
+          "type": "tweet"
+        }
+      ],
+      "meta": {
+        "next_token": "mock_string_value"
+      }
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

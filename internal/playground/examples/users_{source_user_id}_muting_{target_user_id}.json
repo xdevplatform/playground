@@ -1,0 +1,29 @@
+[
+  {
+    "endpoint": "/2/users/{source_user_id}/muting/{target_user_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "muting": true
+      },
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 429,
+          "title": "Playground Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

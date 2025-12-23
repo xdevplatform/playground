@@ -1,0 +1,13 @@
+[
+  {
+    "endpoint": "/2/dm_conversations/with/{participant_id}/messages",
+    "method": "POST",
+    "response": {
+      "data": {
+        "code": 404,
+        "message": "Operation completed successfully"
+      }
+    },
+    "fields": {}
+  }
+]

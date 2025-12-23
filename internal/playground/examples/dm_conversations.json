@@ -1,0 +1,13 @@
+[
+  {
+    "endpoint": "/2/dm_conversations",
+    "method": "POST",
+    "response": {
+      "data": {
+        "code": 429,
+        "message": "Action performed"
+      }
+    },
+    "fields": {}
+  }
+]

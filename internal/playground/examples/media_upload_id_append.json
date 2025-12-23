@@ -1,0 +1,39 @@
+[
+  {
+    "endpoint": "/2/media/upload/{id}/append",
+    "method": "POST",
+    "response": {
+      "data": {
+        "expires_at": 139
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 429,
+          "title": "Playground Title",
+          "type": "media"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 200,
+          "title": "Playground Title",
+          "type": "list"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 500,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ],
+      "meta": "default_value"
+    },
+    "fields": {
+      "media.fields": [
+        "media_key",
+        "type",
+        "url"
+      ]
+    }
+  }
+]

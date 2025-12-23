@@ -1,0 +1,86 @@
+[
+  {
+    "endpoint": "/2/ai_trends/{id}",
+    "method": "GET",
+    "response": {
+      "data": {
+        "category": "amplify_video",
+        "cluster_posts_results": [
+          {
+            "post_id": "1346889436626259968"
+          },
+          {
+            "post_id": "1346889436626259968"
+          }
+        ],
+        "contexts": {
+          "entities": {
+            "events": [
+              "mock_string_value"
+            ],
+            "organizations": [
+              "mock_string_value"
+            ],
+            "people": [
+              "mock_string_value"
+            ],
+            "places": [
+              "mock_string_value",
+              "mock_string_value"
+            ],
+            "products": [
+              "mock_string_value",
+              "mock_string_value"
+            ]
+          },
+          "finance": {
+            "tickers": [
+              "mock_string_value",
+              "mock_string_value"
+            ]
+          },
+          "sports": {
+            "teams": [
+              "mock_string_value"
+            ]
+          },
+          "topics": [
+            "mock_string_value",
+            "mock_string_value"
+          ]
+        },
+        "disclaimer": "mock_disclaimer_value",
+        "hook": "mock_hook_value",
+        "keywords": [
+          "mock_string_value",
+          "mock_string_value"
+        ],
+        "last_updated_at_ms": "2025-11-26T13:30:10-08:00",
+        "name": "Sample List",
+        "rest_id": "2244994945",
+        "summary": "mock_summary_value"
+      },
+      "errors": [
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Playground Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "The request is invalid",
+          "status": 201,
+          "title": "Sample Title",
+          "type": "user"
+        },
+        {
+          "detail": "The specified resource was not found",
+          "status": 500,
+          "title": "Sample Title",
+          "type": "user"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

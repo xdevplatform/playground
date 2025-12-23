@@ -1,0 +1,39 @@
+[
+  {
+    "endpoint": "/2/users/{id}/bookmarks/folders",
+    "method": "GET",
+    "response": {
+      "data": [
+        {
+          "id": "1146654567674912769",
+          "name": "Test User"
+        },
+        {
+          "id": "1146654567674912769",
+          "name": "Demo Account"
+        }
+      ],
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 400,
+          "title": "Sample Title",
+          "type": "tweet"
+        }
+      ],
+      "meta": {
+        "next_token": "mock_string_value"
+      }
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

@@ -1,0 +1,57 @@
+# Binaries
+/playground
+playground.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace file
+go.work
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+dist/
+build/
+bin/
+
+# Test coverage
+*.coverprofile
+coverage.html
+coverage.out
+
+# Dependency directories
+vendor/
+
+# Local configuration (user-specific)
+.playground/
+*.local.json
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+
+# Generated files (if any)
+*.generated.go
+
+# OpenAPI cache (user-specific)
+.playground-openapi-cache.json
+
+# State files (user-specific)
+*.state.json
+state.json
+
+# Example config (keep the example, ignore user copies)
+playground.config.json
+!playground.config.example.json

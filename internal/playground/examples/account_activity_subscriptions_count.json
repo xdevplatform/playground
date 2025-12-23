@@ -1,0 +1,35 @@
+[
+  {
+    "endpoint": "/2/account_activity/subscriptions/count",
+    "method": "GET",
+    "response": {
+      "data": {
+        "account_name": "Playground User",
+        "provisioned_count": "mock_provisioned_count_value",
+        "subscriptions_count_all": "mock_subscriptions_count_all_value",
+        "subscriptions_count_direct_messages": "Action performed"
+      },
+      "errors": [
+        {
+          "detail": "The specified resource was not found",
+          "status": 404,
+          "title": "Test Title",
+          "type": "user"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 200,
+          "title": "Sample Title",
+          "type": "tweet"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 403,
+          "title": "Sample Title",
+          "type": "tweet"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]

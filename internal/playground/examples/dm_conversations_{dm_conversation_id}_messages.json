@@ -1,0 +1,13 @@
+[
+  {
+    "endpoint": "/2/dm_conversations/{dm_conversation_id}/messages",
+    "method": "POST",
+    "response": {
+      "data": {
+        "code": 503,
+        "message": "Operation completed successfully"
+      }
+    },
+    "fields": {}
+  }
+]

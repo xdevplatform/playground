@@ -1,0 +1,20 @@
+[
+  {
+    "endpoint": "/2/tweets/{tweet_id}/hidden",
+    "method": "PUT",
+    "response": {
+      "data": {
+        "hidden": false
+      }
+    },
+    "fields": {
+      "tweet.fields": [
+        "id",
+        "text",
+        "created_at",
+        "author_id",
+        "public_metrics"
+      ]
+    }
+  }
+]

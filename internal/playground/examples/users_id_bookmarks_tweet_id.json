@@ -1,0 +1,29 @@
+[
+  {
+    "endpoint": "/2/users/{id}/bookmarks/{tweet_id}",
+    "method": "DELETE",
+    "response": {
+      "data": {
+        "bookmarked": false
+      },
+      "errors": [
+        {
+          "detail": "Rate limit exceeded",
+          "status": 404,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {
+      "user.fields": [
+        "id",
+        "name",
+        "username",
+        "description",
+        "created_at",
+        "public_metrics"
+      ]
+    }
+  }
+]

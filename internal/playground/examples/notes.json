@@ -1,0 +1,32 @@
+[
+  {
+    "endpoint": "/2/notes",
+    "method": "POST",
+    "response": {
+      "data": {
+        "id": "1146654567674912769"
+      },
+      "errors": [
+        {
+          "detail": "The request is invalid",
+          "status": 201,
+          "title": "Sample Title",
+          "type": "media"
+        },
+        {
+          "detail": "Authentication credentials were missing or incorrect",
+          "status": 400,
+          "title": "Example Title",
+          "type": "user"
+        },
+        {
+          "detail": "Rate limit exceeded",
+          "status": 429,
+          "title": "Example Title",
+          "type": "media"
+        }
+      ]
+    },
+    "fields": {}
+  }
+]
