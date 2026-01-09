@@ -1,6 +1,6 @@
 # X API Playground
 
-A standalone local HTTP server that simulates the X (Twitter) API v2 for testing and development without consuming API credits.
+A standalone local HTTP server that simulates the X API v2 for testing and development without consuming API credits.
 
 ## Features
 
