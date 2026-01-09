@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X API Playground</title>
     <link rel="stylesheet" href="/playground/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Toast Container -->
@@ -54,6 +55,15 @@
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                     Data Explorer
+                </a>
+                <a href="#credits" class="nav-item" data-section="credits">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="21" x2="3" y2="10"></line>
+                        <line x1="8" y1="21" x2="8" y2="6"></line>
+                        <line x1="13" y1="21" x2="13" y2="14"></line>
+                        <line x1="18" y1="21" x2="18" y2="3"></line>
+                    </svg>
+                    Usage
                 </a>
                 <a href="#config" class="nav-item" data-section="config">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -341,6 +351,26 @@
                     <div class="explorer-content" id="explorerContent">
                         <div class="empty-state">Select a data type and use the search bar to find data</div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Usage Section -->
+            <section id="credits" class="content-section">
+                <div class="section-header">
+                    <h2>Usage</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="refreshCredits()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="credits-content" id="creditsContent">
+                    <div class="loading">Loading usage data...</div>
                 </div>
             </section>
 

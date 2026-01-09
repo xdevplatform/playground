@@ -42,6 +42,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"time"
 )
@@ -53,6 +54,7 @@ type Server struct {
 	state        *State
 	examples     *ExampleStore
 	persistence  *StatePersistence
+	creditTracker *CreditTracker
 	port         int
 	host         string
 	activeReqs   int64 // Track active requests (atomic)
@@ -78,25 +80,32 @@ func NewServerWithRefresh(port int, host string, refreshCache bool) *Server {
 	if state == nil {
 		log.Fatal("CRITICAL: Failed to initialize state - this should never happen")
 	}
+
+	examples := NewExampleStore()
+	creditTracker := NewCreditTracker()
 	
 	// Initialize persistence if enabled
 	var persistence *StatePersistence
 	if config != nil {
 		persistenceConfig := config.GetPersistenceConfig()
 		if persistenceConfig != nil && persistenceConfig.Enabled {
-			persistence = NewStatePersistence(state, persistenceConfig)
-			if persistence != nil {
-				if export, err := LoadStateFromFile(persistenceConfig); err == nil && export != nil {
-					log.Printf("Loaded persisted state from %s", persistenceConfig.FilePath)
-				} else {
-					log.Printf("State persistence enabled: %s (auto-save: %v, interval: %ds)", 
-						persistenceConfig.FilePath, persistenceConfig.AutoSave, persistenceConfig.SaveInterval)
+			// Load persisted state first to get credit data
+			if export, err := LoadStateFromFile(persistenceConfig); err == nil && export != nil {
+				log.Printf("Loaded persisted state from %s", persistenceConfig.FilePath)
+				// Import credit tracking data if available
+				if export.CreditUsage != nil || export.ResourceAccess != nil {
+					ImportCreditData(creditTracker, export)
+					log.Printf("Loaded persisted credit tracking data")
 				}
+			}
+			// Create persistence with credit tracker reference
+			persistence = NewStatePersistenceWithCredits(state, persistenceConfig, creditTracker)
+			if persistence != nil {
+				log.Printf("State persistence enabled: %s (auto-save: %v, interval: %ds)", 
+					persistenceConfig.FilePath, persistenceConfig.AutoSave, persistenceConfig.SaveInterval)
 			}
 		}
 	}
-
-	examples := NewExampleStore()
 	mux := http.NewServeMux()
 
 	// Load OpenAPI spec
@@ -139,13 +148,14 @@ func NewServerWithRefresh(port int, host string, refreshCache bool) *Server {
 	
 	// Create server instance first (with nil handler, will be set later)
 	server := &Server{
-		httpServer:  httpServer,
-		state:       state,
-		examples:    examples,
-		persistence: persistence,
-		port:        port,
-		host:        host,
-		activeReqs:  0,
+		httpServer:   httpServer,
+		state:        state,
+		examples:     examples,
+		persistence:  persistence,
+		creditTracker: creditTracker,
+		port:         port,
+		host:         host,
+		activeReqs:   0,
 	}
 	
 	// Setup HTTP handlers
@@ -173,6 +183,21 @@ func NewServerWithRefresh(port int, host string, refreshCache bool) *Server {
 	mux.HandleFunc("/state/import", HandleStateImport(state, persistence))
 	mux.HandleFunc("/state/save", HandleStateSave(persistence))
 	
+	// Add credit tracking endpoints
+	mux.HandleFunc("/api/credits/pricing", HandleCreditsPricing(creditTracker))
+	// Note: HandleAccountUsage handles /api/accounts/{id}/usage and HandleAccountCost handles /api/accounts/{id}/cost
+	// Both use the same prefix, so we need to register a handler that routes based on the full path
+	mux.HandleFunc("/api/accounts/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if strings.HasSuffix(path, "/cost") {
+			HandleAccountCost(creditTracker)(w, r)
+		} else if strings.HasSuffix(path, "/usage") {
+			HandleAccountUsage(creditTracker)(w, r)
+		} else {
+			WriteError(w, http.StatusNotFound, "Not found. Use /api/accounts/{id}/usage or /api/accounts/{id}/cost", 404)
+		}
+	})
+	
 	// Setup handlers (includes CORS handling in unified handler)
 	SetupHandlers(mux, state, spec, examples, server)
 
@@ -192,6 +217,7 @@ func (s *Server) Start() error {
 	log.Printf("Playground server starting on %s", addr)
 	log.Printf("Supported endpoints: All X API v2 endpoints from OpenAPI spec")
 	log.Printf("Management endpoints: /health, /rate-limits, /config, /state")
+	log.Printf("Credit tracking endpoints: /api/credits/pricing, /api/accounts/{id}/usage")
 	
 	if s.persistence != nil {
 		log.Printf("State persistence: ENABLED (file: %s, auto-save: %v, interval: %ds)", 
@@ -238,12 +264,12 @@ func (s *Server) Stop(ctx context.Context) error {
 		log.Printf("Warning: %d active request(s) still in progress, proceeding with shutdown", atomic.LoadInt64(&s.activeReqs))
 	}
 	
-	// Save state if persistence is enabled
+	// Save state if persistence is enabled (includes credit tracking data)
 	if s.persistence != nil {
 		if err := s.persistence.Stop(); err != nil {
 			log.Printf("Warning: Failed to save state: %v", err)
 		} else {
-			log.Printf("State saved successfully")
+			log.Printf("State saved successfully (including credit tracking data)")
 		}
 	}
 	

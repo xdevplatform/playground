@@ -47,6 +47,9 @@ type StateExport struct {
 	ActivitySubscriptions map[string]*ActivitySubscription `json:"activity_subscriptions,omitempty"`
 	PersonalizedTrends []*PersonalizedTrend          `json:"personalized_trends,omitempty"`
 	Relationships      []RelationshipExport          `json:"relationships,omitempty"`
+	CreditUsage        map[string]map[string]*AccountUsage `json:"credit_usage,omitempty"` // accountID -> grouping -> AccountUsage
+	ResourceAccess     map[string]map[string]string  `json:"resource_access,omitempty"` // accountID -> resourceKey -> timestamp (ISO 8601)
+	FirstRequestTime   map[string]string            `json:"first_request_time,omitempty"` // accountID -> timestamp (ISO 8601)
 	ExportedAt         time.Time                      `json:"exported_at"`
 }
 
@@ -83,6 +86,11 @@ func HandleStateReset(state *State, persistence *StatePersistence) http.HandlerF
 		state.activitySubscriptions = make(map[string]*ActivitySubscription)
 		state.nextID = 1
 		state.mu.Unlock()
+		
+		// Reset credit tracking data
+		if server := GetGlobalServer(); server != nil && server.creditTracker != nil {
+			server.creditTracker.Reset()
+		}
 
 		// Reseed with config
 		if config != nil {
@@ -119,7 +127,17 @@ func HandleStateDelete(state *State, persistence *StatePersistence) http.Handler
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
+		
+		// Reset credit tracking data
+		if server := GetGlobalServer(); server != nil && server.creditTracker != nil {
+			server.creditTracker.Reset()
+		}
 
+		// Reset credit tracking data
+		if server := GetGlobalServer(); server != nil && server.creditTracker != nil {
+			server.creditTracker.Reset()
+		}
+		
 		// Clear all state
 		state.mu.Lock()
 		state.users = make(map[string]*User)
@@ -190,6 +208,12 @@ func HandleStateExport(state *State) http.HandlerFunc {
 			Notes:                make(map[string]*Note),
 			ActivitySubscriptions: make(map[string]*ActivitySubscription),
 			ExportedAt:          time.Now(),
+		}
+		
+		// Export credit tracking data if available
+		if server := GetGlobalServer(); server != nil && server.creditTracker != nil {
+			export.CreditUsage = server.creditTracker.ExportUsage()
+			export.ResourceAccess = server.creditTracker.ExportResourceAccess()
 		}
 
 		// Copy all data
@@ -1002,6 +1026,11 @@ func HandleStateImport(state *State, persistence *StatePersistence) http.Handler
 		state.activitySubscriptions = tempState.activitySubscriptions
 		state.nextID = tempState.nextID
 		state.mu.Unlock()
+		
+		// Import credit tracking data if available
+		if server := GetGlobalServer(); server != nil && server.creditTracker != nil {
+			ImportCreditData(server.creditTracker, &importData)
+		}
 
 		// Calculate import metrics
 		importDuration := time.Since(startTime)

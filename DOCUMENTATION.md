@@ -1131,6 +1131,273 @@ curl -X POST http://localhost:8080/state/save
 
 ---
 
+## Usage & Cost Tracking API
+
+The playground provides API endpoints to programmatically access the same usage and cost data shown in the Usage tab of the web UI. These endpoints track API usage at the developer account level and provide detailed cost breakdowns.
+
+**Quick Start:**
+```bash
+# Get complete cost breakdown (same as Usage tab)
+curl http://localhost:8080/api/accounts/0/cost | jq
+
+# Get usage breakdown by event type
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=eventType" | jq
+
+# Get usage breakdown by request type
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=requestType" | jq
+```
+
+**Note:** The `account_id` parameter is your developer account ID, automatically derived from your authentication token. The default token "test" maps to account "0". Different tokens map to different developer accounts.
+
+---
+
+#### `GET /api/credits/pricing`
+
+Get the current pricing configuration for all event types and request types.
+
+**Authentication**: Not required
+
+**Query Parameters:**
+- `refresh` (boolean, optional): If `true`, forces a refresh of pricing from the API. Default: `false`
+
+**Response:**
+```json
+{
+  "eventTypePricing": {
+    "Post": 0.005,
+    "User": 0.01,
+    "Like": 0.001,
+    "Follow": 0.01,
+    ...
+  },
+  "requestTypePricing": {
+    "Write": 0.01,
+    "ContentCreate": 0.01,
+    "UserInteractionCreate": 0.015,
+    ...
+  },
+  "defaultCost": 0
+}
+```
+
+**Fields:**
+- `eventTypePricing` (object): Map of event type names to their cost per resource
+- `requestTypePricing` (object): Map of request type names to their cost per request
+- `defaultCost` (number): Default cost for unpriced endpoints
+
+**Example:**
+```bash
+# Get current pricing
+curl http://localhost:8080/api/credits/pricing | jq
+
+# Force refresh pricing from API
+curl "http://localhost:8080/api/credits/pricing?refresh=true" | jq
+```
+
+---
+
+#### `GET /api/accounts/{account_id}/usage`
+
+Get usage data for a specific account, grouped by event type or request type.
+
+**Authentication**: Not required
+
+**Path Parameters:**
+- `account_id` (string, required): The developer account ID.
+  
+  **Important:** In the real X API, `account_id` refers to the **developer account ID** (the account that owns the API keys/apps), **not** the user ID. All usage across all apps and users under a developer account is aggregated together.
+  
+  In the playground, the developer account ID is automatically derived from the authentication token:
+  - **Bearer tokens**: Developer account ID is derived from the token (same token = same account)
+  - **OAuth 1.0a**: Developer account ID is derived from the consumer key
+  - **OAuth 2.0**: Developer account ID would be extracted from token claims (in production)
+  - **Default**: Falls back to authenticated user ID for simple tokens (typically "0")
+  
+  To simulate multiple developer accounts, use different Bearer tokens or OAuth consumer keys - each will map to a different developer account ID.
+
+**Query Parameters:**
+- `interval` (string, optional): Time interval for usage data. Options: `"7days"`, `"30days"`, `"90days"`. Default: `"30days"`
+- `groupBy` (string, required): Grouping type. Must be either `"eventType"` or `"requestType"`
+
+**Response:**
+```json
+{
+  "accountID": "0",
+  "interval": "30days",
+  "groupBy": "eventType",
+  "groups": {
+    "Post": {
+      "type": "Post",
+      "usage": "150",
+      "price": "0.005",
+      "totalCost": 0.75,
+      "usageDataPoints": [
+        {
+          "timestamp": "1704067200000",
+          "value": "10"
+        },
+        ...
+      ]
+    },
+    ...
+  },
+  "total": {
+    "usage": "500",
+    "totalCost": 2.5,
+    "usageDataPoints": [...]
+  }
+}
+```
+
+**Fields:**
+- `accountID` (string): The account ID
+- `interval` (string): The time interval used
+- `groupBy` (string): The grouping type used
+- `groups` (object): Map of type names to usage data
+  - Each group contains:
+    - `type` (string): The type name
+    - `usage` (string): Total usage count as string
+    - `price` (string): Price per item as string
+    - `totalCost` (number): Total cost for this type
+    - `usageDataPoints` (array): Time series data points
+- `total` (object): Aggregate totals across all types
+
+**Example:**
+```bash
+# Get event type usage for account 0
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=eventType" | jq
+
+# Get request type usage for account 0
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=requestType" | jq
+
+# Get 7-day usage
+curl "http://localhost:8080/api/accounts/0/usage?interval=7days&groupBy=eventType" | jq
+```
+
+---
+
+#### `GET /api/accounts/{account_id}/cost`
+
+Get detailed cost breakdown for a specific account, including billing cycle information and time series data.
+
+**Authentication**: Not required
+
+**Path Parameters:**
+- `account_id` (string, required): The developer account ID.
+  
+  **Note:** In the real X API, this is the developer account ID (the account that owns the API keys/apps), not the user ID. In the playground, this is automatically derived from your authentication token. Use different tokens/keys to simulate different developer accounts.
+
+**Response:**
+```json
+{
+  "accountID": "0",
+  "totalCost": 2.5,
+  "eventTypeCosts": [
+    {
+      "type": "Post",
+      "usage": 150,
+      "price": 0.005,
+      "totalCost": 0.75
+    },
+    ...
+  ],
+  "requestTypeCosts": [
+    {
+      "type": "Write",
+      "usage": 50,
+      "price": 0.01,
+      "totalCost": 0.5
+    },
+    ...
+  ],
+  "billingCycleStart": "2026-01-08T00:00:00Z",
+  "currentBillingCycle": 1,
+  "eventTypeTimeSeries": [
+    {
+      "date": "2026-01-08",
+      "timestamp": 1704067200000,
+      "costs": {
+        "Post": 0.05,
+        "User": 0.1
+      }
+    },
+    ...
+  ],
+  "requestTypeTimeSeries": [
+    {
+      "date": "2026-01-08",
+      "timestamp": 1704067200000,
+      "costs": {
+        "Write": 0.1,
+        "ContentCreate": 0.05
+      }
+    },
+    ...
+  ]
+}
+```
+
+**Fields:**
+- `accountID` (string): The account ID
+- `totalCost` (number): Total estimated cost for the current billing cycle
+- `eventTypeCosts` (array): Cost breakdown by event type
+  - `type` (string): Event type name
+  - `usage` (integer): Number of resources used
+  - `price` (number): Price per resource
+  - `totalCost` (number): Total cost for this type
+- `requestTypeCosts` (array): Cost breakdown by request type (same structure as eventTypeCosts)
+- `billingCycleStart` (string): ISO 8601 timestamp of the billing cycle start date
+- `currentBillingCycle` (integer): Current billing cycle number (1-based, resets monthly)
+- `eventTypeTimeSeries` (array): Daily cost data for event types over the billing cycle
+  - `date` (string): Date in YYYY-MM-DD format
+  - `timestamp` (integer): Unix timestamp in milliseconds
+  - `costs` (object): Map of event type names to daily costs
+- `requestTypeTimeSeries` (array): Daily cost data for request types over the billing cycle (same structure as eventTypeTimeSeries)
+
+**Example:**
+```bash
+# Get cost breakdown for account 0
+curl http://localhost:8080/api/accounts/0/cost | jq
+
+# Pretty print with jq
+curl http://localhost:8080/api/accounts/0/cost | jq '.totalCost, .eventTypeCosts, .requestTypeCosts'
+
+# Get time series data only
+curl http://localhost:8080/api/accounts/0/cost | jq '.eventTypeTimeSeries'
+```
+
+**Note:** 
+- The billing cycle is a 30-day period starting from the first request made by the account. The cycle resets monthly.
+- **Developer Account vs User ID:** In the real X API, `account_id` refers to the **developer account ID** (the account that owns the API keys/apps), **not** the user ID. All usage across all apps and users under a developer account is aggregated together. In the playground, the developer account ID is automatically derived from your authentication token (Bearer token, OAuth consumer key, etc.), matching the real API behavior.
+
+**Getting the Same Data as the Usage Tab:**
+
+The `/api/accounts/{account_id}/cost` endpoint returns all the data displayed in the Usage tab:
+- Total cost and billing cycle information
+- Cost breakdowns by event type and request type  
+- Daily time series data for the charts (`eventTypeTimeSeries` and `requestTypeTimeSeries`)
+- Usage statistics
+
+To replicate what the Usage tab shows programmatically:
+
+```bash
+# Get the complete cost breakdown (includes all Usage tab data)
+curl http://localhost:8080/api/accounts/0/cost | jq
+
+# Extract specific fields
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.totalCost'                    # Total cost
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.eventTypeCosts'               # Event type breakdown
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.requestTypeCosts'             # Request type breakdown
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.eventTypeTimeSeries'         # Chart data for event types
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.requestTypeTimeSeries'       # Chart data for request types
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.billingCycleStart'           # Billing cycle start
+curl -s http://localhost:8080/api/accounts/0/cost | jq '.currentBillingCycle'         # Current cycle number
+```
+
+The Usage tab also fetches additional usage details from `/api/accounts/{account_id}/usage` endpoints, but the `/cost` endpoint provides the primary data structure.
+
+---
+
 ## API Endpoints (Continued)
 
 Due to the extensive number of endpoints, I'll continue with detailed documentation in the next section. The playground supports all X API v2 endpoints. Here are the main categories:

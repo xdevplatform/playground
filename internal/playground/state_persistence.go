@@ -27,6 +27,7 @@ const (
 type StatePersistence struct {
 	config            *PersistenceConfig
 	state             *State
+	creditTracker     *CreditTracker // Reference to credit tracker for persistence
 	mu                sync.Mutex
 	lastSave          time.Time
 	saveTicker        *time.Ticker
@@ -40,6 +41,13 @@ type StatePersistence struct {
 // Returns nil if persistence is disabled in the configuration.
 // Starts auto-save goroutine if enabled in configuration.
 func NewStatePersistence(state *State, config *PersistenceConfig) *StatePersistence {
+	return NewStatePersistenceWithCredits(state, config, nil)
+}
+
+// NewStatePersistenceWithCredits creates a new state persistence manager with credit tracker.
+// Returns nil if persistence is disabled in the configuration.
+// Starts auto-save goroutine if enabled in configuration.
+func NewStatePersistenceWithCredits(state *State, config *PersistenceConfig, creditTracker *CreditTracker) *StatePersistence {
 	if config == nil || !config.Enabled {
 		return nil // Persistence disabled
 	}
@@ -47,6 +55,7 @@ func NewStatePersistence(state *State, config *PersistenceConfig) *StatePersiste
 	sp := &StatePersistence{
 		config:        config,
 		state:         state,
+		creditTracker: creditTracker,
 		stopChan:      make(chan bool),
 		maxFailures:   5, // Disable auto-save after 5 consecutive failures
 	}
@@ -211,6 +220,13 @@ func (sp *StatePersistence) SaveState() error {
 	export.PersonalizedTrends = make([]*PersonalizedTrend, len(sp.state.personalizedTrends))
 	copy(export.PersonalizedTrends, sp.state.personalizedTrends)
 	sp.state.mu.RUnlock()
+
+	// Export credit tracking data if available
+	if sp.creditTracker != nil {
+		export.CreditUsage = sp.creditTracker.ExportUsage()
+		export.ResourceAccess = sp.creditTracker.ExportResourceAccess()
+		export.FirstRequestTime = sp.creditTracker.ExportFirstRequestTime()
+	}
 
 	// Marshal to JSON
 	data, err := json.MarshalIndent(export, "", "  ")
@@ -490,6 +506,18 @@ func ImportStateFromFile(state *State, export *StateExport) {
 	// Ensure default user (ID "0") always exists
 	// Note: Lock is already held, so use the unlocked version
 	ensureDefaultUserUnlocked(state)
+}
+
+// ImportCreditData imports credit tracking data from state export into credit tracker.
+// This should be called separately after ImportStateFromFile.
+func ImportCreditData(creditTracker *CreditTracker, export *StateExport) {
+	if creditTracker == nil || export == nil {
+		return
+	}
+	
+	creditTracker.ImportUsage(export.CreditUsage)
+	creditTracker.ImportResourceAccess(export.ResourceAccess)
+	creditTracker.ImportFirstRequestTime(export.FirstRequestTime)
 }
 
 // parseInt64 parses a string ID to int64

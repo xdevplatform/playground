@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkServerStatus();
     loadExplorer();
     loadConfig();
+    loadCredits();
     loadStateInfo();
     updateRequestHistory();
     loadEndpoints();
@@ -119,6 +120,8 @@ function showSection(sectionId) {
             loadExplorer();
         } else if (sectionId === 'config') {
             loadConfig();
+        } else if (sectionId === 'credits') {
+            loadCredits();
         }
     }
 }
@@ -5598,5 +5601,579 @@ function updateSearchOperatorsTooltip(type) {
     content.innerHTML = operators.map(op => 
         `<div style="margin-bottom: 6px;"><code style="color: var(--primary); font-weight: 600;">${escapeHtml(op.op)}</code> <span style="color: var(--text-secondary);">${escapeHtml(op.desc)}</span></div>`
     ).join('') + '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted);">You can combine multiple operators and add free text search.</div>';
+}
+
+// Usage
+let creditsCharts = {};
+
+async function loadCredits() {
+    const creditsContent = document.getElementById('creditsContent');
+    if (!creditsContent) return;
+    
+    creditsContent.innerHTML = '<div class="loading">Loading usage data...</div>';
+    
+    try {
+        // Get account ID (default to "0" for playground user)
+        const accountID = '0';
+        
+        // Fetch cost breakdown, usage, and pricing in parallel
+        const [costResponse, usageEventResponse, usageRequestResponse, pricingResponse] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/accounts/${accountID}/cost`),
+            fetch(`${API_BASE_URL}/api/accounts/${accountID}/usage?interval=30days&groupBy=eventType`),
+            fetch(`${API_BASE_URL}/api/accounts/${accountID}/usage?interval=30days&groupBy=requestType`),
+            fetch(`${API_BASE_URL}/api/credits/pricing`)
+        ]);
+        
+        if (!costResponse.ok || !usageEventResponse.ok || !usageRequestResponse.ok || !pricingResponse.ok) {
+            throw new Error('Failed to load credits data');
+        }
+        
+        const costData = await costResponse.json();
+        const usageEventData = await usageEventResponse.json();
+        const usageRequestData = await usageRequestResponse.json();
+        const pricingData = await pricingResponse.json();
+        
+        renderCreditsPage(costData, usageEventData, usageRequestData, pricingData);
+    } catch (error) {
+        console.error('Error loading credits:', error);
+        creditsContent.innerHTML = `<div class="error-state">Error loading usage data: ${error.message}</div>`;
+    }
+}
+
+function renderCreditsPage(costData, usageEventData, usageRequestData, pricingData) {
+    const creditsContent = document.getElementById('creditsContent');
+    if (!creditsContent) return;
+    
+    const totalCost = costData.totalCost || 0;
+    const eventTypeCosts = costData.eventTypeCosts || [];
+    const requestTypeCosts = costData.requestTypeCosts || [];
+    const eventTypeTimeSeries = costData.eventTypeTimeSeries || [];
+    const requestTypeTimeSeries = costData.requestTypeTimeSeries || [];
+    // Format billing cycle start date consistently with chart dates
+    // Parse the RFC3339 date and format it to match the chart x-axis format
+    let billingCycleStart = 'N/A';
+    if (costData.billingCycleStart) {
+        const startDate = new Date(costData.billingCycleStart);
+        // Use the same format as chart labels for consistency
+        billingCycleStart = startDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+    }
+    const currentBillingCycle = costData.currentBillingCycle || 1;
+    
+    // Calculate totals
+    const totalEventTypeUsage = eventTypeCosts.reduce((sum, item) => sum + item.usage, 0);
+    const totalRequestTypeUsage = requestTypeCosts.reduce((sum, item) => sum + item.usage, 0);
+    const totalEventTypeCost = eventTypeCosts.reduce((sum, item) => sum + item.totalCost, 0);
+    const totalRequestTypeCost = requestTypeCosts.reduce((sum, item) => sum + item.totalCost, 0);
+    
+    // Get all available types for filters
+    const allEventTypes = [...new Set(eventTypeCosts.map(c => c.type))];
+    const allRequestTypes = [...new Set(requestTypeCosts.map(c => c.type))];
+    
+    creditsContent.innerHTML = `
+        <!-- Stats Overview -->
+        <div class="state-stats-grid" style="margin-bottom: 24px;">
+            <div class="state-stat-item">
+                <div class="state-stat-label">Total Estimated Cost</div>
+                <div class="state-stat-value" style="color: var(--primary);">$${totalCost.toFixed(3)}</div>
+                <div class="state-stat-value-small" style="margin-top: 4px;">Billing Cycle ${currentBillingCycle}</div>
+            </div>
+            <div class="state-stat-item">
+                <div class="state-stat-label">Event Types Cost</div>
+                <div class="state-stat-value">$${totalEventTypeCost.toFixed(3)}</div>
+                <div class="state-stat-value-small" style="margin-top: 4px;">${totalEventTypeUsage.toLocaleString()} resources</div>
+            </div>
+            <div class="state-stat-item">
+                <div class="state-stat-label">Request Types Cost</div>
+                <div class="state-stat-value">$${totalRequestTypeCost.toFixed(3)}</div>
+                <div class="state-stat-value-small" style="margin-top: 4px;">${totalRequestTypeUsage.toLocaleString()} requests</div>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="explorer-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0;">Cost by Event Type</h3>
+                    <select id="eventTypeChartFilter" class="select-input" onchange="updateEventTypeChart()" style="min-width: 150px;">
+                        <option value="all">All Types</option>
+                        ${allEventTypes.map(type => `<option value="${type}">${type}</option>`).join('')}
+                    </select>
+                </div>
+                <div style="font-size: 12px; color: #71767a; margin-bottom: 12px;">Billing Cycle ${currentBillingCycle} (Started: ${billingCycleStart})</div>
+                <canvas id="eventTypeCostChart" style="max-height: 300px;"></canvas>
+            </div>
+            <div class="explorer-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0;">Cost by Request Type</h3>
+                    <select id="requestTypeChartFilter" class="select-input" onchange="updateRequestTypeChart()" style="min-width: 150px;">
+                        <option value="all">All Types</option>
+                        ${allRequestTypes.map(type => `<option value="${type}">${type}</option>`).join('')}
+                    </select>
+                </div>
+                <div style="font-size: 12px; color: #71767a; margin-bottom: 12px;">Billing Cycle ${currentBillingCycle} (Started: ${billingCycleStart})</div>
+                <canvas id="requestTypeCostChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+        
+        <!-- Breakdown Tables -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="table-container">
+                <div class="table-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-bottom: 24px;">
+                    <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: #ffffff;">Event Type Breakdown</h3>
+                    <select id="eventTypeFilter" class="select-input" onchange="filterCreditsTable('eventType')" style="min-width: 150px; margin-bottom: 0;">
+                        <option value="all">All Types</option>
+                        ${Object.keys(pricingData.eventTypePricing || {}).map(type => 
+                            `<option value="${type}">${type}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="table-wrapper" style="overflow-x: auto; border-radius: 12px;">
+                    <table class="usage-table" style="width: 100%; border-collapse: separate; border-spacing: 0; background: #000000; border-radius: 12px; overflow: hidden; border: 1px solid #2f3336;">
+                        <thead style="background: linear-gradient(180deg, #202327 0%, #16181c 100%);">
+                            <tr>
+                                <th style="padding: 16px 20px; text-align: left; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Event Type</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Usage</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Price per Unit</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Total Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventTypeTableBody">
+                            ${renderCostTableRows(eventTypeCosts, 'eventType')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-bottom: 24px;">
+                    <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: #ffffff;">Request Type Breakdown</h3>
+                    <select id="requestTypeFilter" class="select-input" onchange="filterCreditsTable('requestType')" style="min-width: 150px; margin-bottom: 0;">
+                        <option value="all">All Types</option>
+                        ${Object.keys(pricingData.requestTypePricing || {}).map(type => 
+                            `<option value="${type}">${type}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="table-wrapper" style="overflow-x: auto; border-radius: 12px;">
+                    <table class="usage-table" style="width: 100%; border-collapse: separate; border-spacing: 0; background: #000000; border-radius: 12px; overflow: hidden; border: 1px solid #2f3336;">
+                        <thead style="background: linear-gradient(180deg, #202327 0%, #16181c 100%);">
+                            <tr>
+                                <th style="padding: 16px 20px; text-align: left; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Request Type</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Usage</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Price per Unit</th>
+                                <th style="padding: 16px 20px; text-align: right; font-size: 11px; font-weight: 700; color: #71767a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #2f3336; white-space: nowrap;">Total Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestTypeTableBody">
+                            ${renderCostTableRows(requestTypeCosts, 'requestType')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Store data globally for chart updates
+    window.costData = costData;
+    window.pricingData = pricingData;
+    
+    // Render charts
+    updateEventTypeChart();
+    updateRequestTypeChart();
+    
+    // Attach hover effects to table rows after rendering
+    setTimeout(function() {
+        attachTableHoverEffects();
+    }, 100);
+}
+
+function attachTableHoverEffects() {
+    const rows = document.querySelectorAll('.usage-table-row');
+    rows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.background = '#16181c';
+            const badge = this.querySelector('.usage-type-badge');
+            const cost = this.querySelector('.usage-cost');
+            if (badge) {
+                badge.style.background = 'rgba(120, 86, 255, 0.25)';
+                badge.style.borderColor = 'rgba(120, 86, 255, 0.5)';
+            }
+            if (cost) {
+                cost.style.background = 'rgba(120, 86, 255, 0.3)';
+                cost.style.borderColor = 'rgba(120, 86, 255, 0.6)';
+                cost.style.boxShadow = '0 2px 8px rgba(120, 86, 255, 0.2)';
+            }
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.background = '#000000';
+            const badge = this.querySelector('.usage-type-badge');
+            const cost = this.querySelector('.usage-cost');
+            if (badge) {
+                badge.style.background = 'rgba(120, 86, 255, 0.15)';
+                badge.style.borderColor = 'rgba(120, 86, 255, 0.3)';
+            }
+            if (cost) {
+                cost.style.background = 'rgba(120, 86, 255, 0.2)';
+                cost.style.borderColor = 'rgba(120, 86, 255, 0.4)';
+                cost.style.boxShadow = '0 2px 4px rgba(120, 86, 255, 0.1)';
+            }
+        });
+    });
+}
+
+function renderCostTableRows(costs, type) {
+    if (!costs || costs.length === 0) {
+        return '<tr><td colspan="4" style="text-align: center; color: #71767a; padding: 48px 20px; font-size: 14px; font-style: italic;">No usage data</td></tr>';
+    }
+    
+    return costs.map(item => `
+        <tr class="usage-table-row" data-type="${item.type}" style="background: #000000; border-bottom: 1px solid #2f3336; transition: all 0.2s ease;">
+            <td class="usage-type-cell" style="padding: 16px 20px; min-width: 180px;">
+                <span class="usage-type-badge" style="display: inline-block; padding: 6px 14px; background: rgba(120, 86, 255, 0.15); color: #7856FF; border-radius: 6px; font-size: 13px; font-weight: 600; border: 1px solid rgba(120, 86, 255, 0.3);">${item.type}</span>
+            </td>
+            <td class="usage-number-cell" style="padding: 16px 20px; text-align: right; min-width: 120px;">
+                <span class="usage-number" style="display: inline-block; padding: 4px 10px; background: #202327; color: #ffffff; border-radius: 4px; font-family: Monaco, Menlo, 'Courier New', monospace; font-size: 13px; font-weight: 500; border: 1px solid #2f3336;">${item.usage.toLocaleString()}</span>
+            </td>
+            <td class="usage-price-cell" style="padding: 16px 20px; text-align: right; min-width: 140px;">
+                <span class="usage-price" style="display: inline-block; padding: 4px 10px; background: rgba(120, 86, 255, 0.1); color: #e7e9ea; border-radius: 4px; font-family: Monaco, Menlo, 'Courier New', monospace; font-size: 13px; font-weight: 500; border: 1px solid rgba(120, 86, 255, 0.2);">$${item.price.toFixed(3)}</span>
+            </td>
+            <td class="usage-cost-cell" style="padding: 16px 20px; text-align: right; min-width: 140px;">
+                <span class="usage-cost" style="display: inline-block; padding: 6px 12px; background: rgba(120, 86, 255, 0.2); color: #7856FF; border-radius: 6px; font-size: 15px; font-weight: 700; border: 1px solid rgba(120, 86, 255, 0.4); box-shadow: 0 2px 4px rgba(120, 86, 255, 0.1);">$${item.totalCost.toFixed(3)}</span>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateEventTypeChart() {
+    if (!window.costData) return;
+    const timeSeries = window.costData.eventTypeTimeSeries || [];
+    const filter = document.getElementById('eventTypeChartFilter')?.value || 'all';
+    renderTimeSeriesChart('eventTypeCostChart', timeSeries, filter, 'Event Types');
+}
+
+function updateRequestTypeChart() {
+    if (!window.costData) return;
+    const timeSeries = window.costData.requestTypeTimeSeries || [];
+    const filter = document.getElementById('requestTypeChartFilter')?.value || 'all';
+    renderTimeSeriesChart('requestTypeCostChart', timeSeries, filter, 'Request Types');
+}
+
+function renderTimeSeriesChart(canvasId, timeSeries, filterType, label) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    if (!timeSeries || timeSeries.length === 0) {
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#71767a';
+        ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+        return;
+    }
+    
+    // Destroy existing chart if it exists
+    if (creditsCharts[canvasId]) {
+        creditsCharts[canvasId].destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Extract dates and filter costs
+    const labels = timeSeries.map(point => {
+        const date = new Date(point.timestamp);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    
+    // Get all types from the time series (include any type that has costs > 0 on any day)
+    const allTypes = new Set();
+    timeSeries.forEach(point => {
+        if (point.costs) {
+            Object.keys(point.costs).forEach(type => {
+                if (point.costs[type] > 0) {
+                    allTypes.add(type);
+                }
+            });
+        }
+    });
+    
+    // Filter types if needed
+    const typesToShow = filterType === 'all' 
+        ? Array.from(allTypes) 
+        : [filterType].filter(t => allTypes.has(t));
+    
+    if (typesToShow.length === 0) {
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#71767a';
+        ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+        return;
+    }
+    
+    // Determine chart type - both cost charts use bar charts
+    const chartType = (canvasId === 'eventTypeCostChart' || canvasId === 'requestTypeCostChart') ? 'bar' : 'line';
+    
+    // Base color palette - exact colors provided
+    const baseColors = [
+        { r: 120, g: 86, b: 255 },   // Purple (primary)
+        { r: 29, g: 155, b: 240 },   // Blue
+        { r: 255, g: 212, b: 0 },    // Yellow
+        { r: 249, g: 24, b: 128 },   // Pink
+        { r: 255, g: 122, b: 0 },    // Orange
+        { r: 0, g: 186, b: 124 },    // Green
+    ];
+    
+    // Function to derive a color by interpolating between base colors
+    function deriveColor(index) {
+        if (index < baseColors.length) {
+            return baseColors[index];
+        }
+        
+        // For indices beyond base colors, interpolate between adjacent base colors
+        const baseIndex = index % baseColors.length;
+        const nextBaseIndex = (baseIndex + 1) % baseColors.length;
+        // Blend factor: 0.5 for first extra cycle, increasing gradually
+        const cycle = Math.floor(index / baseColors.length);
+        const t = 0.5 + (cycle - 1) * 0.1; // 0.5, 0.6, 0.7, 0.8, etc. (capped at reasonable values)
+        
+        const color1 = baseColors[baseIndex];
+        const color2 = baseColors[nextBaseIndex];
+        
+        // Clamp t to reasonable range
+        const blendFactor = Math.min(Math.max(t, 0.3), 0.9);
+        
+        return {
+            r: Math.round(color1.r + (color2.r - color1.r) * blendFactor),
+            g: Math.round(color1.g + (color2.g - color1.g) * blendFactor),
+            b: Math.round(color1.b + (color2.b - color1.b) * blendFactor)
+        };
+    }
+    
+    // Function to get color as rgba string
+    function getColorRGBA(index, alpha) {
+        const color = deriveColor(index);
+        return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+    }
+    
+    // Create datasets for each type
+    let datasets = typesToShow.map((type, index) => {
+        const backgroundColor = getColorRGBA(index, 0.8);
+        const borderColor = getColorRGBA(index, 1.0);
+        
+        if (chartType === 'bar') {
+            // Bar chart styling
+            return {
+                label: type,
+                data: timeSeries.map(point => point.costs[type] || 0),
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false
+            };
+        } else {
+            // Line chart styling
+            return {
+                label: type,
+                data: timeSeries.map(point => point.costs[type] || 0),
+                borderColor: borderColor,
+                backgroundColor: getColorRGBA(index, 0.1),
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4
+            };
+        }
+    });
+    
+    // Always use primary purple for single dataset
+    if (datasets.length === 1) {
+        if (chartType === 'bar') {
+            datasets[0].backgroundColor = 'rgba(120, 86, 255, 0.8)';
+            datasets[0].borderColor = 'rgba(120, 86, 255, 1)';
+        } else {
+            datasets[0].borderColor = 'rgba(120, 86, 255, 1)';
+            datasets[0].backgroundColor = 'rgba(120, 86, 255, 0.1)';
+        }
+    }
+    
+    creditsCharts[canvasId] = new Chart(ctx, {
+        type: chartType,
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: typesToShow.length > 1,
+                    position: 'top',
+                    labels: {
+                        color: '#e7e9ea',
+                        font: {
+                            size: 12
+                        },
+                        padding: 12,
+                        usePointStyle: chartType === 'line'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#16181c',
+                    titleColor: '#ffffff',
+                    bodyColor: '#e7e9ea',
+                    borderColor: '#2f3336',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        title: function(context) {
+                            // Show the date
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            const dataIndex = context.dataIndex;
+                            const point = timeSeries[dataIndex];
+                            const type = context.dataset.label;
+                            const cost = context.parsed.y;
+                            
+                            if (cost === 0) {
+                                return `${type}: $0.000`;
+                            }
+                            
+                            // Determine if this is event type or request type pricing
+                            const isEventType = canvasId === 'eventTypeCostChart';
+                            const pricing = isEventType 
+                                ? (window.pricingData?.eventTypePricing || {})
+                                : (window.pricingData?.requestTypePricing || {});
+                            
+                            const pricePerItem = pricing[type] || 0;
+                            const itemCount = pricePerItem > 0 ? (cost / pricePerItem) : 0;
+                            const itemLabel = isEventType ? 'event' : 'request';
+                            const itemLabelPlural = isEventType ? 'events' : 'requests';
+                            
+                            // Format the breakdown
+                            let label = `${type}: $${cost.toFixed(3)}`;
+                            if (pricePerItem > 0 && itemCount > 0) {
+                                label += ` (${Math.round(itemCount)} ${itemCount === 1 ? itemLabel : itemLabelPlural} × $${pricePerItem.toFixed(3)}/${itemLabel})`;
+                            }
+                            
+                            return label;
+                        },
+                        footer: function(context) {
+                            // Calculate and show total cost for all types at this data point
+                            let totalCost = 0;
+                            context.forEach(item => {
+                                totalCost += item.parsed.y;
+                            });
+                            
+                            if (totalCost === 0) {
+                                return '';
+                            }
+                            
+                            return `Total: $${totalCost.toFixed(3)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#e7e9ea',
+                        font: {
+                            size: 11
+                        },
+                        maxRotation: chartType === 'bar' ? 45 : 45,
+                        minRotation: 0
+                    },
+                    grid: {
+                        color: '#2f3336',
+                        display: false // No grid lines for bar charts
+                    },
+                    border: {
+                        color: '#e7e9ea'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#e7e9ea',
+                        font: {
+                            size: 12
+                        },
+                        callback: function(value) {
+                            return '$' + value.toFixed(3);
+                        }
+                    },
+                    grid: {
+                        color: '#2f3336'
+                    },
+                    border: {
+                        color: '#e7e9ea'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function filterCreditsTable(type) {
+    const filterSelect = document.getElementById(`${type}Filter`);
+    const tableBody = document.getElementById(`${type}TableBody`);
+    if (!filterSelect || !tableBody) return;
+    
+    const filterValue = filterSelect.value;
+    const rows = tableBody.querySelectorAll('tr.usage-table-row');
+    
+    rows.forEach(row => {
+        if (filterValue === 'all') {
+            row.style.display = '';
+        } else {
+            const rowType = row.getAttribute('data-type');
+            row.style.display = rowType === filterValue ? '' : 'none';
+        }
+    });
+}
+
+// Add hover effects via JavaScript since inline styles don't support :hover
+document.addEventListener('DOMContentLoaded', function() {
+    // This will be called when the page loads, but we need to attach listeners after table is rendered
+    setTimeout(function() {
+        const rows = document.querySelectorAll('.usage-table-row');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.background = '#16181c';
+                const badge = this.querySelector('.usage-type-badge');
+                const cost = this.querySelector('.usage-cost');
+                if (badge) {
+                    badge.style.background = 'rgba(120, 86, 255, 0.25)';
+                    badge.style.borderColor = 'rgba(120, 86, 255, 0.5)';
+                }
+                if (cost) {
+                    cost.style.background = 'rgba(120, 86, 255, 0.3)';
+                    cost.style.borderColor = 'rgba(120, 86, 255, 0.6)';
+                    cost.style.boxShadow = '0 2px 8px rgba(120, 86, 255, 0.2)';
+                }
+            });
+            row.addEventListener('mouseleave', function() {
+                this.style.background = '#000000';
+                const badge = this.querySelector('.usage-type-badge');
+                const cost = this.querySelector('.usage-cost');
+                if (badge) {
+                    badge.style.background = 'rgba(120, 86, 255, 0.15)';
+                    badge.style.borderColor = 'rgba(120, 86, 255, 0.3)';
+                }
+                if (cost) {
+                    cost.style.background = 'rgba(120, 86, 255, 0.2)';
+                    cost.style.borderColor = 'rgba(120, 86, 255, 0.4)';
+                    cost.style.boxShadow = '0 2px 4px rgba(120, 86, 255, 0.1)';
+                }
+            });
+        });
+    }, 500);
+});
+
+async function refreshCredits() {
+    await loadCredits();
+        showToast('Usage data refreshed', 'success');
 }
 

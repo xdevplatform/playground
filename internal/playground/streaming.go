@@ -22,7 +22,7 @@ import (
 
 // handleStreamingEndpoint handles Server-Sent Events (SSE) streaming endpoints
 // Returns true if handled, false otherwise
-func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path, method string, r *http.Request, state *State, spec *OpenAPISpec, queryParams *QueryParams) bool {
+func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path, method string, r *http.Request, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker) bool {
 	log.Printf("DEBUG handleStreamingEndpoint: called with path='%s', method='%s'", path, method)
 	// Exclude rule management endpoints - these are NOT streaming endpoints
 	if strings.Contains(path, "/stream/rules") {
@@ -105,8 +105,11 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 	// Flush headers immediately
 	flusher.Flush()
 
-	// Get authenticated user ID and register this connection
+	// Get authenticated user ID for connection registration
 	authenticatedUserID := getAuthenticatedUserID(r, state)
+	// Get developer account ID for credit tracking (matches real X API behavior)
+	developerAccountID := getDeveloperAccountID(r, state)
+	
 	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel() // Ensure cleanup on exit
 	
@@ -114,7 +117,7 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 	connectionID, unregister := state.RegisterStreamConnection(authenticatedUserID, cancel)
 	defer unregister() // Unregister when connection ends
 	
-	log.Printf("Registered stream connection %s for user %s at path %s", connectionID, authenticatedUserID, path)
+	log.Printf("Registered stream connection %s for user %s (dev account %s) at path %s", connectionID, authenticatedUserID, developerAccountID, path)
 	
 	// Create a new request with the cancellable context
 	r = r.WithContext(ctx)
@@ -122,13 +125,13 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 	// Determine what to stream based on endpoint
 	if strings.Contains(path, "/tweets/sample/stream") || strings.Contains(path, "/tweets/sample10/stream") {
 		log.Printf("Streaming sample tweets from: %s", path)
-		streamSampleTweets(w, r, state, queryParams)
+		streamSampleTweets(w, r, state, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 
 	if strings.Contains(path, "/tweets/search/stream") {
 		log.Printf("Streaming search tweets from: %s", path)
-		streamSearchTweets(w, r, state, queryParams)
+		streamSearchTweets(w, r, state, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 
@@ -138,10 +141,10 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 		if strings.Contains(path, "/lang/") {
 			lang := extractLanguageFromPath(path)
 			log.Printf("Detected language-specific firehose stream for language: %s (path: %s)", lang, path)
-			streamFirehoseTweetsByLanguage(w, r, state, queryParams, lang)
+			streamFirehoseTweetsByLanguage(w, r, state, queryParams, lang, creditTracker, developerAccountID, path, method)
 		} else {
 			log.Printf("Streaming regular firehose (no language filter)")
-			streamFirehoseTweets(w, r, state, queryParams)
+			streamFirehoseTweets(w, r, state, queryParams, creditTracker, developerAccountID, path, method)
 		}
 		return true
 	}
@@ -149,25 +152,25 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 	if strings.Contains(path, "/likes/firehose/stream") || strings.Contains(path, "/likes/sample10/stream") {
 		log.Printf("Streaming likes firehose from: %s", path)
 		// Firehose streams simulate continuous data - stream all tweets like sample stream
-		streamLikesFirehose(w, r, state, queryParams)
+		streamLikesFirehose(w, r, state, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 	
 	if strings.Contains(path, "/likes/compliance/stream") {
 		log.Printf("Streaming likes compliance from: %s", path)
-		streamComplianceLikes(w, r, op, state, spec, queryParams)
+		streamComplianceLikes(w, r, op, state, spec, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 
 	if strings.Contains(path, "/tweets/compliance/stream") {
 		log.Printf("Streaming compliance tweets from: %s", path)
-		streamComplianceTweets(w, r, op, state, spec, queryParams)
+		streamComplianceTweets(w, r, op, state, spec, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 
 	if strings.Contains(path, "/users/compliance/stream") {
 		log.Printf("Streaming compliance users from: %s", path)
-		streamComplianceUsers(w, r, op, state, spec, queryParams)
+		streamComplianceUsers(w, r, op, state, spec, queryParams, creditTracker, developerAccountID, path, method)
 		return true
 	}
 
@@ -180,7 +183,7 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 }
 
 // streamSampleTweets streams sample tweets continuously until client disconnects
-func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams) {
+func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Get flusher - responseTimeWriter implements http.Flusher if underlying writer supports it
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -304,6 +307,12 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 					return
 				}
 				flusher.Flush()
+				
+				// Track credit usage for each streamed tweet
+				if creditTracker != nil {
+					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+				}
+				
 				count++
 			}
 		}
@@ -312,7 +321,7 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 
 // streamSearchTweets streams search results continuously
 // Only streams tweets created AFTER the stream connection is established
-func streamSearchTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams) {
+func streamSearchTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	ctx := r.Context()
 
 	// Get flusher - responseTimeWriter implements http.Flusher if underlying writer supports it
@@ -472,19 +481,24 @@ func streamSearchTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 					return
 				}
 				flusher.Flush()
+				
+				// Track credit usage for each streamed tweet
+				if creditTracker != nil {
+					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+				}
 			}
 		}
 	}
 }
 
 // streamFirehoseTweets streams firehose tweets
-func streamFirehoseTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams) {
+func streamFirehoseTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Similar to sample but potentially more tweets
-	streamSampleTweets(w, r, state, queryParams)
+	streamSampleTweets(w, r, state, queryParams, creditTracker, accountID, path, method)
 }
 
 // streamFirehoseTweetsByLanguage streams firehose tweets filtered by language
-func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, lang string) {
+func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, lang string, creditTracker *CreditTracker, accountID, path, method string) {
 	log.Printf("streamFirehoseTweetsByLanguage called for language: %s", lang)
 	// Get flusher - responseTimeWriter implements http.Flusher if underlying writer supports it
 	flusher, ok := w.(http.Flusher)
@@ -663,6 +677,12 @@ func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, stat
 				return
 			}
 			flusher.Flush()
+			
+			// Track credit usage for each streamed tweet
+			if creditTracker != nil {
+				creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+			}
+			
 			count++
 		}
 	}
@@ -677,7 +697,7 @@ func generateLikeEventID() string {
 
 // streamLikesFirehose streams likes firehose - simulates continuous stream of like events
 // This streams like events (not tweets) matching the real API format
-func streamLikesFirehose(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams) {
+func streamLikesFirehose(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Get flusher - responseTimeWriter implements http.Flusher if underlying writer supports it
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -897,15 +917,20 @@ func streamLikesFirehose(w http.ResponseWriter, r *http.Request, state *State, q
 				return
 			}
 			flusher.Flush()
+			
+			// Track credit usage for each streamed like event
+			if creditTracker != nil {
+				creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+			}
 		}
 	}
 }
 
 // streamComplianceTweets streams tweets for compliance using OpenAPI spec
-func streamComplianceTweets(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams) {
+func streamComplianceTweets(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Use OpenAPI spec to generate compliance events
 	if op != nil && op.Operation != nil {
-		streamComplianceFromSchema(w, r, op, state, spec, queryParams)
+		streamComplianceFromSchema(w, r, op, state, spec, queryParams, creditTracker, accountID, path, method)
 	} else {
 		// Fallback to generic streaming
 		streamGeneric(w, op, state, spec, queryParams)
@@ -913,17 +938,17 @@ func streamComplianceTweets(w http.ResponseWriter, r *http.Request, op *Endpoint
 }
 
 // streamComplianceLikes streams likes for compliance using OpenAPI spec
-func streamComplianceLikes(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams) {
+func streamComplianceLikes(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Use OpenAPI spec to generate compliance events
 	// streamComplianceFromSchema handles nil op by building structure manually
-	streamComplianceFromSchema(w, r, op, state, spec, queryParams)
+	streamComplianceFromSchema(w, r, op, state, spec, queryParams, creditTracker, accountID, path, method)
 }
 
 // streamComplianceUsers streams user compliance events using OpenAPI spec
-func streamComplianceUsers(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams) {
+func streamComplianceUsers(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Use OpenAPI spec to generate compliance events
 	if op != nil && op.Operation != nil {
-		streamComplianceFromSchema(w, r, op, state, spec, queryParams)
+		streamComplianceFromSchema(w, r, op, state, spec, queryParams, creditTracker, accountID, path, method)
 	} else {
 		// Fallback to generic streaming
 		streamGeneric(w, op, state, spec, queryParams)
@@ -951,7 +976,7 @@ func extractLanguageFromPath(path string) string {
 }
 
 // streamComplianceFromSchema streams compliance events using OpenAPI spec response schema
-func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams) {
+func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *EndpointOperation, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Get flusher
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -1048,6 +1073,12 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
+				}
+				flusher.Flush()
+				
+				// Track credit usage for each streamed compliance event
+				if creditTracker != nil {
+					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
 				}
 			} else if strings.Contains(r.URL.Path, "/tweets/compliance/stream") {
 				// For tweet compliance, generate compliance events using schema structure
@@ -1152,6 +1183,12 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 				if err != nil {
 					return
 				}
+				flusher.Flush()
+				
+				// Track credit usage for each streamed compliance tweet event
+				if creditTracker != nil {
+					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+				}
 			} else if strings.Contains(r.URL.Path, "/likes/compliance/stream") {
 				// For likes compliance, generate compliance events using schema structure
 				// Get tweets and users from state to generate like compliance events
@@ -1235,21 +1272,27 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 								},
 								"event_at": formatted[:len(formatted)-4] + "Z",
 							},
-						},
-					}
+					},
 				}
-				
-				eventJSON, err := json.Marshal(complianceEvent)
-				if err != nil {
-					log.Printf("Error marshaling compliance event: %v", err)
-					continue
-				}
-				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
-				if err != nil {
-					return
-				}
-			} else {
-				// For other compliance streams, use schema-generated response
+			}
+			
+			eventJSON, err := json.Marshal(complianceEvent)
+			if err != nil {
+				log.Printf("Error marshaling compliance event: %v", err)
+				continue
+			}
+			_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+			if err != nil {
+				return
+			}
+			flusher.Flush()
+			
+			// Track credit usage for each streamed compliance like event
+			if creditTracker != nil {
+				creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
+			}
+		} else {
+			// For other compliance streams, use schema-generated response
 				if baseResponse == nil {
 					// If no schema response, send keep-alive
 					fmt.Fprintf(w, "\n")
@@ -1265,6 +1308,12 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
+				}
+				flusher.Flush()
+				
+				// Track credit usage for each streamed compliance event
+				if creditTracker != nil {
+					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
 				}
 			}
 			

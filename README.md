@@ -8,6 +8,7 @@ A standalone local HTTP server that simulates the X (Twitter) API v2 for testing
 - Stateful operations with in-memory state management
 - Optional file-based state persistence across server restarts
 - Interactive web UI for exploring and testing endpoints
+- **Usage and cost tracking** - Track API usage and estimate costs programmatically
 - Request validation against OpenAPI specifications
 - Error responses matching real API formats
 - Configurable rate limiting simulation
@@ -125,6 +126,40 @@ The playground provides several management endpoints (not part of X API):
 - `POST /state/save` - Manually save state (if persistence enabled)
 - `DELETE /state` - Delete all state
 - `GET /endpoints` - List all available endpoints
+
+### Usage & Cost Tracking Endpoints
+
+The playground tracks API usage and provides cost estimation endpoints. These endpoints provide the same data shown in the Usage tab of the web UI:
+
+- `GET /api/credits/pricing` - Get pricing configuration for event types and request types
+- `GET /api/accounts/{account_id}/usage` - Get usage data (query params: `interval`, `groupBy`)
+- `GET /api/accounts/{account_id}/cost` - Get detailed cost breakdown with billing cycle data and time series
+
+**Getting Usage Data Programmatically:**
+
+The `account_id` is your developer account ID, automatically derived from your authentication token. The default token "test" maps to account "0".
+
+```bash
+# Get complete cost breakdown (same data as Usage tab)
+curl http://localhost:8080/api/accounts/0/cost | jq
+
+# Get event type usage breakdown
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=eventType" | jq
+
+# Get request type usage breakdown
+curl "http://localhost:8080/api/accounts/0/usage?interval=30days&groupBy=requestType" | jq
+
+# Get pricing configuration
+curl http://localhost:8080/api/credits/pricing | jq
+```
+
+**Note:** The `/api/accounts/{account_id}/cost` endpoint returns all the data shown in the Usage tab, including:
+- Total cost and billing cycle information
+- Cost breakdowns by event type and request type
+- Daily time series data for charts
+- Usage statistics
+
+See [DOCUMENTATION.md](DOCUMENTATION.md) for detailed API documentation.
 
 ## Documentation
 

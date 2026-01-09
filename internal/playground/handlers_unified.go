@@ -107,6 +107,92 @@ func getAuthenticatedUserID(r *http.Request, state *State) string {
 	return "0"
 }
 
+// getDeveloperAccountID returns the developer account ID from the request.
+// In the real X API, this is the account that owns the API keys/apps.
+// This function extracts or derives the developer account ID from the authentication token.
+//
+// Strategy:
+//   - For Bearer tokens: Derive from token hash or extract if token contains account info
+//   - For OAuth 1.0a: Use consumer key to derive account ID
+//   - For OAuth 2.0: Extract from token claims
+//   - Fallback: Use authenticated user ID (for backward compatibility with simple tokens)
+func getDeveloperAccountID(r *http.Request, state *State) string {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		// No auth header, use default user ID as fallback
+		return getAuthenticatedUserID(r, state)
+	}
+
+	// Try to extract developer account ID from different auth methods
+	authLower := strings.ToLower(authHeader)
+	
+	// Bearer token (OAuth 2.0 App-Only or User Context)
+	if strings.HasPrefix(authLower, "bearer ") {
+		token := strings.TrimSpace(authHeader[7:])
+		// For simple tokens like "test" or "Bearer test", use a hash-based approach
+		// In production, this would decode the JWT and extract the developer account ID
+		if token == "test" || token == "" {
+			// Default playground token maps to developer account "0"
+			return "0"
+		}
+		// For other tokens, derive developer account ID from token hash
+		// This ensures consistent mapping: same token = same developer account
+		return deriveDeveloperAccountFromToken(token)
+	}
+	
+	// OAuth 1.0a: Extract consumer key from Authorization header
+	// Format: OAuth oauth_consumer_key="...", oauth_token="...", etc.
+	if strings.HasPrefix(authLower, "oauth ") {
+		consumerKey := extractOAuthConsumerKey(authHeader)
+		if consumerKey != "" {
+			// Derive developer account ID from consumer key
+			return deriveDeveloperAccountFromToken(consumerKey)
+		}
+	}
+	
+	// Fallback: Use authenticated user ID
+	// This maintains backward compatibility for simple auth scenarios
+	return getAuthenticatedUserID(r, state)
+}
+
+// deriveDeveloperAccountFromToken derives a consistent developer account ID from a token/key.
+// Uses a simple hash-based approach to ensure the same token always maps to the same account.
+// In production, this would extract the actual developer account ID from the token.
+func deriveDeveloperAccountFromToken(token string) string {
+	if token == "" {
+		return "0"
+	}
+	
+	// Simple hash to convert token to a consistent account ID
+	// This ensures same token = same developer account
+	hash := 0
+	for _, c := range token {
+		hash = hash*31 + int(c)
+	}
+	
+	// Convert to positive number and use modulo to keep IDs reasonable
+	accountID := (hash & 0x7FFFFFFF) % 1000
+	
+	// Special case: common test tokens map to account "0"
+	if token == "test" || token == "Bearer test" {
+		return "0"
+	}
+	
+	return strconv.Itoa(accountID)
+}
+
+// extractOAuthConsumerKey extracts the consumer key from an OAuth 1.0a Authorization header.
+func extractOAuthConsumerKey(authHeader string) string {
+	// Parse OAuth header: OAuth oauth_consumer_key="...", oauth_token="...", etc.
+	// Look for oauth_consumer_key="value" or oauth_consumer_key=value
+	re := regexp.MustCompile(`oauth_consumer_key=["']?([^"',\s]+)["']?`)
+	matches := re.FindStringSubmatch(authHeader)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	return ""
+}
+
 // validateUserIDMatchesAuthenticatedUser checks if the path parameter user ID matches the authenticated user ID.
 // Returns an error response if they don't match, or nil if they do match.
 func validateUserIDMatchesAuthenticatedUser(pathUserID string, authenticatedUserID string) ([]byte, int) {
@@ -116,6 +202,55 @@ func validateUserIDMatchesAuthenticatedUser(pathUserID string, authenticatedUser
 		return data, statusCode
 	}
 	return nil, 0
+}
+
+// countResourcesFromResponse counts the number of resources in a JSON response.
+// For eventTypePricing endpoints, this represents the number of resources fetched.
+// Returns 0 if the response cannot be parsed or doesn't contain a data array.
+func countResourcesFromResponse(responseData []byte) int {
+	if len(responseData) == 0 {
+		return 0
+	}
+	
+	var response map[string]interface{}
+	if err := json.Unmarshal(responseData, &response); err != nil {
+		return 0
+	}
+	
+	// Check for data array
+	if data, exists := response["data"]; exists {
+		switch v := data.(type) {
+		case []interface{}:
+			// Array of resources
+			return len(v)
+		case map[string]interface{}:
+			// Single resource object
+			return 1
+		}
+	}
+	
+	// Check for includes (expansions)
+	if includes, exists := response["includes"]; exists {
+		if includesMap, ok := includes.(map[string]interface{}); ok {
+			total := 0
+			for _, items := range includesMap {
+				if itemsArray, ok := items.([]interface{}); ok {
+					total += len(itemsArray)
+				}
+			}
+			// If we have includes, also count data if it exists
+			if data, exists := response["data"]; exists {
+				if dataArray, ok := data.([]interface{}); ok {
+					return len(dataArray) + total
+				} else if _, ok := data.(map[string]interface{}); ok {
+					return 1 + total
+				}
+			}
+			return total
+		}
+	}
+	
+	return 0
 }
 
 // createUnifiedOpenAPIHandler creates a handler that uses OpenAPI for all endpoints.
@@ -434,6 +569,11 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 						w.WriteHeader(http.StatusOK)
 						if _, err := w.Write(responseData); err != nil {
 							log.Printf("Error writing response: %v", err)
+						}
+						// Track credit usage at the developer account level (matches real X API behavior)
+						if server != nil && server.creditTracker != nil {
+							developerAccountID := getDeveloperAccountID(r, state)
+							server.creditTracker.TrackUsage(developerAccountID, method, normalizedPathForStateful, responseData, http.StatusOK)
 						}
 						return
 					} else {
@@ -946,7 +1086,11 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 			
 			if isStreamingPath || isStreamingInSpec {
 				log.Printf("DEBUG handlers_unified: Calling handleStreamingEndpoint for path='%s'", path)
-				if handleStreamingEndpoint(w, matchedOp, path, method, r, state, spec, queryParams) {
+				var creditTracker *CreditTracker
+				if server != nil {
+					creditTracker = server.creditTracker
+				}
+				if handleStreamingEndpoint(w, matchedOp, path, method, r, state, spec, queryParams, creditTracker) {
 					return
 				}
 				log.Printf("DEBUG handlers_unified: handleStreamingEndpoint returned false for path='%s'", path)
@@ -1085,6 +1229,12 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 				// Track successful responses
 				if statusCode >= 200 && statusCode < 300 {
 					IncrementRequestsSuccess()
+					// Track credit usage
+					if server != nil && server.creditTracker != nil {
+					// Track credit usage at the developer account level (matches real X API behavior)
+					developerAccountID := getDeveloperAccountID(r, state)
+					server.creditTracker.TrackUsage(developerAccountID, method, pathWithoutQuery, responseData, statusCode)
+					}
 				} else if statusCode >= 400 {
 					IncrementRequestsError()
 				}
@@ -1138,6 +1288,11 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 				if _, err := w.Write(responseJSON); err != nil {
 					log.Printf("Error writing response: %v", err)
 				}
+				// Track credit usage for example responses
+				if server != nil && server.creditTracker != nil {
+					accountID := getAuthenticatedUserID(r, state)
+					server.creditTracker.TrackUsage(accountID, method, pathWithoutQuery, responseJSON, http.StatusOK)
+				}
 				return
 			}
 		}
@@ -1162,6 +1317,11 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 			w.WriteHeader(http.StatusOK)
 			if _, err := w.Write(responseData); err != nil {
 				log.Printf("Error writing response: %v", err)
+			}
+			// Track credit usage for schema-generated responses
+			if server != nil && server.creditTracker != nil {
+				accountID := getAuthenticatedUserID(r, state)
+				server.creditTracker.TrackUsage(accountID, method, pathWithoutQuery, responseData, http.StatusOK)
 			}
 		} else {
 			// Fallback to generic response

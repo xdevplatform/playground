@@ -1,6 +1,6 @@
 :root {
-    --primary: #7C8FA1;
-    --primary-hover: #6B7A8F;
+    --primary: #7856FF;
+    --primary-hover: #6B4DE8;
     --secondary: #71767a;
     --success: #00ba7c;
     --danger: #f4212e;
@@ -289,12 +289,12 @@ body {
 }
 
 .stat-icon.users {
-    background: rgba(124, 143, 161, 0.2);
+    background: rgba(120, 86, 255, 0.2);
     color: var(--primary);
 }
 
 .stat-icon.tweets {
-    background: rgba(124, 143, 161, 0.15);
+    background: rgba(120, 86, 255, 0.15);
     color: var(--primary);
 }
 
@@ -550,7 +550,7 @@ body {
     color: var(--primary);
     text-transform: uppercase;
     padding: 4px 8px;
-    background: rgba(124, 143, 161, 0.1);
+    background: rgba(120, 86, 255, 0.1);
     border-radius: 4px;
 }
 
@@ -847,7 +847,7 @@ body {
 }
 
 .tweet-action:hover {
-    background: rgba(124, 143, 161, 0.1);
+    background: rgba(120, 86, 255, 0.1);
     color: var(--primary);
 }
 
@@ -1064,7 +1064,7 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: rgba(124, 143, 161, 0.2);
+    background: rgba(120, 86, 255, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1493,7 +1493,7 @@ body {
 .code-textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.1);
+    box-shadow: 0 0 0 3px rgba(120, 86, 255, 0.1);
 }
 
 .code-textarea {
@@ -1572,7 +1572,7 @@ body {
 }
 
 .history-item-method.GET {
-    background: rgba(124, 143, 161, 0.2);
+    background: rgba(120, 86, 255, 0.2);
     color: #1d9bf0;
 }
 
@@ -1996,7 +1996,7 @@ body {
 }
 
 .toggle-switch input:focus + .toggle-slider {
-    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.2);
+    box-shadow: 0 0 0 3px rgba(120, 86, 255, 0.2);
 }
 
 .toggle-switch:active .toggle-slider:before {
@@ -2463,7 +2463,7 @@ body {
 .search-input-large:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(124, 143, 161, 0.1);
+    box-shadow: 0 0 0 3px rgba(120, 86, 255, 0.1);
 }
 
 .quick-stats-bar {
@@ -2627,4 +2627,188 @@ body {
     color: var(--text-muted);
     margin: 0;
     line-height: 1.4;
+}
+
+/* Usage Table Styles - Enhanced design matching playground UI */
+.table-wrapper .usage-table,
+.usage-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.table-wrapper .usage-table thead,
+.usage-table thead {
+    background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+}
+
+.table-wrapper .usage-table thead th,
+.usage-table thead th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    position: relative;
+}
+
+.usage-table thead th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: var(--border);
+}
+
+.table-wrapper .usage-table tbody tr.usage-table-row,
+.usage-table tbody tr.usage-table-row {
+    background: var(--bg-primary) !important;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.table-wrapper .usage-table tbody tr.usage-table-row:hover,
+.usage-table tbody tr.usage-table-row:hover {
+    background: var(--bg-secondary) !important;
+    transform: translateX(2px);
+}
+
+.usage-table tbody tr.usage-table-row:last-child {
+    border-bottom: none;
+}
+
+.table-wrapper .usage-table td,
+.usage-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    vertical-align: middle;
+    color: var(--text-primary) !important;
+}
+
+.usage-empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 48px 20px !important;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.usage-type-cell {
+    min-width: 180px;
+}
+
+.usage-type-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(120, 86, 255, 0.15) !important;
+    color: var(--primary) !important;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(120, 86, 255, 0.3) !important;
+    transition: all 0.2s ease;
+}
+
+.usage-table-row:hover .usage-type-badge {
+    background: rgba(120, 86, 255, 0.25);
+    border-color: rgba(120, 86, 255, 0.5);
+    transform: scale(1.02);
+}
+
+.usage-number-cell {
+    text-align: right;
+    min-width: 120px;
+}
+
+.usage-number {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border) !important;
+}
+
+.usage-price-cell {
+    text-align: right;
+    min-width: 140px;
+}
+
+.usage-price {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(120, 86, 255, 0.1) !important;
+    color: var(--text-secondary) !important;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid rgba(120, 86, 255, 0.2) !important;
+}
+
+.usage-cost-cell {
+    text-align: right;
+    min-width: 140px;
+}
+
+.usage-cost {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(120, 86, 255, 0.2) !important;
+    color: var(--primary) !important;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    border: 1px solid rgba(120, 86, 255, 0.4) !important;
+    box-shadow: 0 2px 4px rgba(120, 86, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.usage-table-row:hover .usage-cost {
+    background: rgba(120, 86, 255, 0.3) !important;
+    border-color: rgba(120, 86, 255, 0.6) !important;
+    box-shadow: 0 2px 8px rgba(120, 86, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Ensure table-wrapper doesn't interfere */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+.table-wrapper .usage-table {
+    margin: 0;
+}
+
+/* Enhanced table-header spacing */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.table-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+}
+
+.table-header .select-input {
+    margin-bottom: 20px;
 }
