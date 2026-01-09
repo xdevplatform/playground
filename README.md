@@ -8,7 +8,7 @@ A standalone local HTTP server that simulates the X (Twitter) API v2 for testing
 - Stateful operations with in-memory state management
 - Optional file-based state persistence across server restarts
 - Interactive web UI for exploring and testing endpoints
-- **Usage and cost tracking** - Track API usage and estimate costs programmatically
+- Usage and cost tracking - Track API usage and estimate costs programmatically
 - Request validation against OpenAPI specifications
 - Error responses matching real API formats
 - Configurable rate limiting simulation
