@@ -12,7 +12,7 @@ A standalone local HTTP server that simulates the X API v2 for testing and devel
 - Request validation against OpenAPI specifications
 - Error responses matching real API formats
 - Configurable rate limiting simulation
-- Server-Sent Events (SSE) streaming support
+- Streaming support
 - CORS support for web applications
 - OpenAPI-driven endpoint discovery and handling
 
