@@ -887,18 +887,19 @@ func (ct *CreditTracker) GetUsage(accountID, interval, groupBy string) *UsageRes
 		days = 1
 	}
 	
-	// Create data points for each day
-	generateDataPoints := func(group *UsageGroup) {
+	// Create data points for each day (work on copies to avoid modifying stored data)
+	generateDataPoints := func(group *UsageGroup) []UsageDataPoint {
 		if len(group.UsageDataPoints) == 0 {
 			// Initialize with zero data points for each day
-			group.UsageDataPoints = make([]UsageDataPoint, days)
+			result := make([]UsageDataPoint, days)
 			for i := 0; i < days; i++ {
 				dayTime := fromDate.AddDate(0, 0, i)
-				group.UsageDataPoints[i] = UsageDataPoint{
+				result[i] = UsageDataPoint{
 					Timestamp: strconv.FormatInt(dayTime.UnixMilli(), 10),
 					Value:     "0",
 				}
 			}
+			return result
 		} else {
 			// Aggregate existing data points by day
 			dailyValues := make(map[int64]int) // timestamp (day start) -> count
@@ -910,24 +911,40 @@ func (ct *CreditTracker) GetUsage(accountID, interval, groupBy string) *UsageRes
 			}
 			
 			// Create data points for each day in the interval
-			group.UsageDataPoints = make([]UsageDataPoint, days)
+			result := make([]UsageDataPoint, days)
 			for i := 0; i < days; i++ {
 				dayTime := fromDate.AddDate(0, 0, i).Truncate(24 * time.Hour)
 				timestamp := dayTime.UnixMilli()
 				value := dailyValues[timestamp]
-				group.UsageDataPoints[i] = UsageDataPoint{
+				result[i] = UsageDataPoint{
 					Timestamp: strconv.FormatInt(timestamp, 10),
 					Value:     strconv.Itoa(value),
 				}
 			}
+			return result
 		}
 	}
 	
-	// Generate data points for all groups
-	for _, group := range accountUsage.Groups {
-		generateDataPoints(group)
+	// Create a copy of accountUsage to avoid modifying the stored data
+	accountUsageCopy := &AccountUsage{
+		UsageUnit: accountUsage.UsageUnit,
+		Cap:       accountUsage.Cap,
+		Groups:    make(map[string]*UsageGroup),
+		Total: &UsageGroup{
+			Usage:          accountUsage.Total.Usage,
+			PercentOfCap:   accountUsage.Total.PercentOfCap,
+			UsageDataPoints: generateDataPoints(accountUsage.Total),
+		},
 	}
-	generateDataPoints(accountUsage.Total)
+	
+	// Generate data points for all groups (on copies)
+	for pricingType, group := range accountUsage.Groups {
+		accountUsageCopy.Groups[pricingType] = &UsageGroup{
+			Usage:          group.Usage,
+			PercentOfCap:   group.PercentOfCap,
+			UsageDataPoints: generateDataPoints(group),
+		}
+	}
 	
 	return &UsageResponse{
 		Bucket:   bucket,
@@ -935,7 +952,7 @@ func (ct *CreditTracker) GetUsage(accountID, interval, groupBy string) *UsageRes
 		ToDate:   now.Format(time.RFC3339),
 		Grouping: groupBy,
 		Usage: map[string]*AccountUsage{
-			accountID: accountUsage,
+			accountID: accountUsageCopy,
 		},
 	}
 }

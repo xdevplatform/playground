@@ -116,6 +116,7 @@ func getAuthenticatedUserID(r *http.Request, state *State) string {
 //   - For OAuth 1.0a: Use consumer key to derive account ID
 //   - For OAuth 2.0: Extract from token claims
 //   - Fallback: Use authenticated user ID (for backward compatibility with simple tokens)
+//   - Default playground credentials map to account "0" for UI consistency
 func getDeveloperAccountID(r *http.Request, state *State) string {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
@@ -129,10 +130,8 @@ func getDeveloperAccountID(r *http.Request, state *State) string {
 	// Bearer token (OAuth 2.0 App-Only or User Context)
 	if strings.HasPrefix(authLower, "bearer ") {
 		token := strings.TrimSpace(authHeader[7:])
-		// For simple tokens like "test" or "Bearer test", use a hash-based approach
-		// In production, this would decode the JWT and extract the developer account ID
-		if token == "test" || token == "" {
-			// Default playground token maps to developer account "0"
+		// Default playground tokens map to developer account "0"
+		if token == "test" || token == "" || token == "your_access_token_here" {
 			return "0"
 		}
 		// For other tokens, derive developer account ID from token hash
@@ -145,7 +144,12 @@ func getDeveloperAccountID(r *http.Request, state *State) string {
 	if strings.HasPrefix(authLower, "oauth ") {
 		consumerKey := extractOAuthConsumerKey(authHeader)
 		if consumerKey != "" {
+			// Default playground consumer key maps to account "0"
+			if consumerKey == "your_consumer_key_here" {
+				return "0"
+			}
 			// Derive developer account ID from consumer key
+			// This ensures consistent mapping: same consumer key = same developer account
 			return deriveDeveloperAccountFromToken(consumerKey)
 		}
 	}
@@ -163,6 +167,12 @@ func deriveDeveloperAccountFromToken(token string) string {
 		return "0"
 	}
 	
+	// Default playground placeholder credentials map to account "0"
+	if token == "test" || token == "Bearer test" || 
+	   token == "your_consumer_key_here" || token == "your_access_token_here" {
+		return "0"
+	}
+	
 	// Simple hash to convert token to a consistent account ID
 	// This ensures same token = same developer account
 	hash := 0
@@ -172,11 +182,6 @@ func deriveDeveloperAccountFromToken(token string) string {
 	
 	// Convert to positive number and use modulo to keep IDs reasonable
 	accountID := (hash & 0x7FFFFFFF) % 1000
-	
-	// Special case: common test tokens map to account "0"
-	if token == "test" || token == "Bearer test" {
-		return "0"
-	}
 	
 	return strconv.Itoa(accountID)
 }
@@ -1080,12 +1085,7 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 				isStreamingInSpec = matchedOp.Operation.IsStreamingEndpoint()
 			}
 			
-			if strings.Contains(path, "/firehose/stream") {
-				log.Printf("DEBUG handlers_unified: path='%s', isStreamingPath=%v, isStreamingInSpec=%v, will call handleStreamingEndpoint=%v", path, isStreamingPath, isStreamingInSpec, isStreamingPath || isStreamingInSpec)
-			}
-			
 			if isStreamingPath || isStreamingInSpec {
-				log.Printf("DEBUG handlers_unified: Calling handleStreamingEndpoint for path='%s'", path)
 				var creditTracker *CreditTracker
 				if server != nil {
 					creditTracker = server.creditTracker
@@ -1093,7 +1093,6 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 				if handleStreamingEndpoint(w, matchedOp, path, method, r, state, spec, queryParams, creditTracker) {
 					return
 				}
-				log.Printf("DEBUG handlers_unified: handleStreamingEndpoint returned false for path='%s'", path)
 			}
 		}
 
@@ -1231,9 +1230,9 @@ func createUnifiedOpenAPIHandler(spec *OpenAPISpec, state *State, examples *Exam
 					IncrementRequestsSuccess()
 					// Track credit usage
 					if server != nil && server.creditTracker != nil {
-					// Track credit usage at the developer account level (matches real X API behavior)
-					developerAccountID := getDeveloperAccountID(r, state)
-					server.creditTracker.TrackUsage(developerAccountID, method, pathWithoutQuery, responseData, statusCode)
+						// Track credit usage at the developer account level (matches real X API behavior)
+						developerAccountID := getDeveloperAccountID(r, state)
+						server.creditTracker.TrackUsage(developerAccountID, method, pathWithoutQuery, responseData, statusCode)
 					}
 				} else if statusCode >= 400 {
 					IncrementRequestsError()

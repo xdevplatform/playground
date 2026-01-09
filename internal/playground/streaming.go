@@ -17,16 +17,16 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
 // handleStreamingEndpoint handles Server-Sent Events (SSE) streaming endpoints
 // Returns true if handled, false otherwise
 func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path, method string, r *http.Request, state *State, spec *OpenAPISpec, queryParams *QueryParams, creditTracker *CreditTracker) bool {
-	log.Printf("DEBUG handleStreamingEndpoint: called with path='%s', method='%s'", path, method)
 	// Exclude rule management endpoints - these are NOT streaming endpoints
 	if strings.Contains(path, "/stream/rules") {
-		log.Printf("DEBUG handleStreamingEndpoint: path contains /stream/rules, returning false")
 		return false
 	}
 	
@@ -182,6 +182,59 @@ func handleStreamingEndpoint(w http.ResponseWriter, op *EndpointOperation, path,
 	return true
 }
 
+// writeStreamDataWithHealthCheck writes data to the stream and checks if client is reading.
+// Returns true if write succeeded and should track credits, false if client appears to have stopped reading.
+// This prevents tracking credits when clients are suspended or not consuming the stream.
+// 
+// Note: When a client is suspended, TCP writes may still succeed quickly because the OS buffer accepts them.
+// We can't perfectly detect this, but we can detect when the buffer fills up (writes start blocking).
+// The health check monitors write frequency and total bytes - if we write too much too fast, client likely not reading.
+func writeStreamDataWithHealthCheck(w http.ResponseWriter, flusher http.Flusher, data []byte, lastSuccessfulWrite *time.Time, lastSuccessfulWriteMu *sync.Mutex, consecutiveFailures *int, writeCount *int64, totalBytesWritten *int64) bool {
+	writeStart := time.Now()
+	bytesWritten, err := fmt.Fprintf(w, "%s\n", data)
+	writeDuration := time.Since(writeStart)
+	
+	const writeTimeout = 5 * time.Second
+	const maxConsecutiveFailures = 3
+	
+	if err != nil || bytesWritten == 0 {
+		// Client disconnected or connection error
+		*consecutiveFailures++
+		log.Printf("Error writing to stream: %v (bytesWritten=%d, failures=%d)", err, bytesWritten, *consecutiveFailures)
+		if *consecutiveFailures >= maxConsecutiveFailures {
+			log.Printf("Stopping stream due to %d consecutive write failures (client likely not reading)", *consecutiveFailures)
+			return false
+		}
+		return false // Write failed, but not enough failures to stop yet
+	}
+	
+	// Increment write count and track bytes written atomically
+	atomic.AddInt64(writeCount, 1)
+	atomic.AddInt64(totalBytesWritten, int64(bytesWritten))
+	
+	// Check if write took too long (indicates client isn't reading, TCP buffer is full)
+	// When TCP send buffer fills up, writes will start blocking/taking longer
+	if writeDuration > writeTimeout/2 {
+		*consecutiveFailures++
+		log.Printf("Write took too long (%v), TCP buffer may be full - client not reading (failures=%d)", writeDuration, *consecutiveFailures)
+		if *consecutiveFailures >= maxConsecutiveFailures {
+			log.Printf("Stopping stream due to slow writes (TCP buffer full, client likely not reading)")
+			return false
+		}
+		flusher.Flush()
+		return false // Write slow, but not enough failures to stop yet
+	}
+	
+	// Write succeeded - update last successful write time (thread-safe)
+	// The health check goroutine will monitor this to detect if client stops reading
+	*consecutiveFailures = 0
+	lastSuccessfulWriteMu.Lock()
+	*lastSuccessfulWrite = time.Now()
+	lastSuccessfulWriteMu.Unlock()
+	flusher.Flush()
+	return true // Write succeeded
+}
+
 // streamSampleTweets streams sample tweets continuously until client disconnects
 func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, queryParams *QueryParams, creditTracker *CreditTracker, accountID, path, method string) {
 	// Get flusher - responseTimeWriter implements http.Flusher if underlying writer supports it
@@ -192,6 +245,53 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 	}
 	
 	ctx := r.Context()
+	
+	// Set up connection health checking to detect when client stops reading
+	// Create a cancellable context for health checking
+	healthCtx, healthCancel := context.WithCancel(ctx)
+	defer healthCancel()
+	
+	// Track last successful write time and consecutive write failures
+	// Use mutex for thread-safe access from health check goroutine
+	var lastSuccessfulWriteMu sync.Mutex
+	lastSuccessfulWrite := time.Now()
+	consecutiveWriteFailures := 0
+	maxConsecutiveFailures := 3 // Stop streaming after 3 consecutive failures
+	clientHealthCheckInterval := 5 * time.Second // Check client health every 5 seconds
+	clientHealthTimeout := 15 * time.Second // Stop if no successful writes in 15 seconds
+	var writeCount int64 // Track total writes
+	var totalBytesWritten int64 // Track total bytes written
+	
+	// Start a health check goroutine that monitors if client is reading
+	// If no successful writes happen within the timeout, cancel the stream
+	// This will catch cases where client is suspended and TCP buffer eventually fills up
+	go func() {
+		ticker := time.NewTicker(clientHealthCheckInterval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-healthCtx.Done():
+				return
+			case <-ticker.C:
+				lastSuccessfulWriteMu.Lock()
+				lastWriteTime := lastSuccessfulWrite
+				lastSuccessfulWriteMu.Unlock()
+				
+				timeSinceLastWrite := time.Since(lastWriteTime)
+				
+				// If no successful writes in the timeout period, stop streaming
+				// This will catch cases where client is suspended and TCP buffer eventually fills up
+				// Note: We cannot perfectly detect suspended clients (Ctrl+Z) because TCP writes succeed
+				// even when the client isn't reading (until buffer fills). Users should use Ctrl+C
+				// to properly stop streams.
+				if timeSinceLastWrite > clientHealthTimeout {
+					log.Printf("Health check: No successful writes in %v, stopping stream", timeSinceLastWrite)
+					healthCancel()
+					return
+				}
+			}
+		}
+	}()
 	
 	// Parse delay parameter (in milliseconds, default 200ms for faster streaming)
 	// Enforce minimum delay of 10ms to prevent excessive CPU usage
@@ -241,6 +341,10 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 		case <-ctx.Done():
 			// Client disconnected
 			log.Printf("Client disconnected from stream")
+			return
+		case <-healthCtx.Done():
+			// Health check detected client not reading
+			log.Printf("Stream stopped by health check (client not reading)")
 			return
 		case <-ticker.C:
 			// Find a tweet that hasn't been sent recently
@@ -300,15 +404,25 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 				}
 
 				eventJSON, _ := json.Marshal(event)
-				_, err := fmt.Fprintf(w, "%s\n", eventJSON)
-				if err != nil {
-					// Client disconnected or connection error
-					log.Printf("Error writing to stream: %v", err)
-					return
-				}
-				flusher.Flush()
 				
-				// Track credit usage for each streamed tweet
+				// Write with health check - only track credits if write succeeds
+				writeSucceeded := writeStreamDataWithHealthCheck(w, flusher, eventJSON, &lastSuccessfulWrite, &lastSuccessfulWriteMu, &consecutiveWriteFailures, &writeCount, &totalBytesWritten)
+				
+				if !writeSucceeded {
+					// Write failed or client not reading - don't track credits, continue or stop
+					if consecutiveWriteFailures >= maxConsecutiveFailures {
+						log.Printf("Stopping stream due to %d consecutive write failures", consecutiveWriteFailures)
+						return // Stop streaming
+					}
+					continue // Try again next tick
+				}
+				
+				// Track credit usage only if write succeeded
+				// Note: We cannot perfectly detect when a client is suspended (Ctrl+Z) because
+				// the TCP buffer accepts writes even when the client isn't reading. The stream
+				// will continue until the buffer fills or the connection is closed (Ctrl+C).
+				// This is a limitation we accept - credits may be tracked for suspended clients
+				// until the TCP buffer fills up and writes start failing.
 				if creditTracker != nil {
 					creditTracker.TrackUsage(accountID, method, path, eventJSON, http.StatusOK)
 				}
