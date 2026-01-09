@@ -297,7 +297,7 @@ func streamSampleTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 				}
 
 				eventJSON, _ := json.Marshal(event)
-				_, err := fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err := fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					// Client disconnected or connection error
 					log.Printf("Error writing to stream: %v", err)
@@ -411,8 +411,8 @@ func streamSearchTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 			
 			// If no new matching tweets, send keep-alive comment and continue
 			if len(newMatchingTweets) == 0 {
-				// Send SSE comment as keep-alive to keep connection open
-				_, err := fmt.Fprintf(w, ": keep-alive\n\n")
+				// Send keep-alive as empty line to keep connection open
+				_, err := fmt.Fprintf(w, "\n")
 				if err != nil {
 					log.Printf("Error writing keep-alive to stream: %v", err)
 					return
@@ -466,7 +466,7 @@ func streamSearchTweets(w http.ResponseWriter, r *http.Request, state *State, qu
 				}
 
 				eventJSON, _ := json.Marshal(event)
-				_, err := fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err := fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					log.Printf("Error writing to search stream: %v", err)
 					return
@@ -548,7 +548,7 @@ func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, stat
 
 	// Send initial keepalive to establish connection immediately
 	if len(shuffled) == 0 {
-		_, err := fmt.Fprintf(w, ": keepalive\n\n")
+		_, err := fmt.Fprintf(w, "\n")
 		if err != nil {
 			log.Printf("streamFirehoseTweetsByLanguage: Error sending initial keepalive for language '%s': %v", lang, err)
 			return
@@ -600,8 +600,8 @@ func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, stat
 
 			// If no tweets available yet, send keepalive to maintain connection
 			if len(shuffled) == 0 {
-				// Send SSE keepalive comment to keep connection alive
-				_, err := fmt.Fprintf(w, ": keepalive\n\n")
+				// Send keepalive as empty line to keep connection alive
+				_, err := fmt.Fprintf(w, "\n")
 				if err != nil {
 					return
 				}
@@ -658,7 +658,7 @@ func streamFirehoseTweetsByLanguage(w http.ResponseWriter, r *http.Request, stat
 			}
 
 			eventJSON, _ := json.Marshal(event)
-			_, err := fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+			_, err := fmt.Fprintf(w, "%s\n", eventJSON)
 			if err != nil {
 				return
 			}
@@ -777,8 +777,8 @@ func streamLikesFirehose(w http.ResponseWriter, r *http.Request, state *State, q
 				log.Printf("Client disconnected from likes firehose stream")
 				return
 			case <-ticker.C:
-				// Send SSE comment as keep-alive to keep connection open
-				_, err := fmt.Fprintf(w, ": keep-alive\n\n")
+				// Send keep-alive as empty line to keep connection open
+				_, err := fmt.Fprintf(w, "\n")
 				if err != nil {
 					log.Printf("Error writing keep-alive to likes firehose stream: %v", err)
 					return
@@ -890,7 +890,7 @@ func streamLikesFirehose(w http.ResponseWriter, r *http.Request, state *State, q
 			}
 
 			eventJSON, _ := json.Marshal(event)
-			_, err := fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+			_, err := fmt.Fprintf(w, "%s\n", eventJSON)
 			if err != nil {
 				// Client disconnected or connection error
 				log.Printf("Error writing to likes firehose stream: %v", err)
@@ -1045,7 +1045,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 					continue
 				}
 				
-				_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
 				}
@@ -1061,7 +1061,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 
 				if len(tweetList) == 0 {
 					// Send keep-alive if no tweets
-					fmt.Fprintf(w, ": keep-alive\n\n")
+					fmt.Fprintf(w, "\n")
 					flusher.Flush()
 					count++
 					continue
@@ -1148,7 +1148,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 					log.Printf("Error marshaling compliance event: %v", err)
 					continue
 				}
-				_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
 				}
@@ -1168,7 +1168,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 
 				if len(tweetList) == 0 || len(userList) == 0 {
 					// Send keep-alive if no data
-					fmt.Fprintf(w, ": keep-alive\n\n")
+					fmt.Fprintf(w, "\n")
 					flusher.Flush()
 					count++
 					continue
@@ -1244,7 +1244,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 					log.Printf("Error marshaling compliance event: %v", err)
 					continue
 				}
-				_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
 				}
@@ -1252,7 +1252,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 				// For other compliance streams, use schema-generated response
 				if baseResponse == nil {
 					// If no schema response, send keep-alive
-					fmt.Fprintf(w, ": keep-alive\n\n")
+					fmt.Fprintf(w, "\n")
 					flusher.Flush()
 					count++
 					continue
@@ -1262,7 +1262,7 @@ func streamComplianceFromSchema(w http.ResponseWriter, r *http.Request, op *Endp
 					log.Printf("Error marshaling compliance event: %v", err)
 					continue
 				}
-				_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+				_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 				if err != nil {
 					return
 				}
@@ -1300,7 +1300,7 @@ func streamGeneric(w http.ResponseWriter, op *EndpointOperation, state *State, s
 			log.Printf("Error marshaling stream response: %v", err)
 			return
 		}
-		_, err = fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+		_, err = fmt.Fprintf(w, "%s\n", eventJSON)
 		if err != nil {
 			// Client disconnected or connection error
 			log.Printf("Error writing to stream: %v", err)
